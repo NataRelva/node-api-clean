@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npx tsc --outDir ./dist index.ts",
     "test": "jest",
-    "test:staged": "jest"
+    "test:staged": "jest",
+    "prepare": "husky install "
   },
   "keywords": [],
   "author": "Natã Relva",
