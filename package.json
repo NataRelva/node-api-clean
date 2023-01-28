@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx tsc --outDir ./dist index.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Natã Relva",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.11.18",
