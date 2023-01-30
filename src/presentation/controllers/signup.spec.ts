@@ -50,10 +50,6 @@ describe('Signup Controller', () => {
   })
 
   test('Should return 400 if phone is provided', () => {
-
-  });
-
-  test('Should return 400 if phone is provided', () => {
     const sut = new SignupController()
     const httpRequest = {
       body: { 
@@ -63,6 +59,9 @@ describe('Signup Controller', () => {
         // phone: 'any_phone',
       }
     }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse?.statusCode).toBe(400)
   })
 
   test('Should return 400 if cpfCpnj is provided', ()=> {
