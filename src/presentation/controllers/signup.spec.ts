@@ -33,4 +33,52 @@ describe('Signup Controller', () => {
     expect(httpResponse?.statusCode).toBe(400)
     expect(httpResponse?.body).toEqual(new MissingParamError('email'))
   });
+
+  test('Should return 400 if password is provided', () => { 
+    const sut = new SignupController()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_name',
+        // password: 'any_password',
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse?.statusCode).toBe(400)
+    expect(httpResponse?.body).toEqual(new MissingParamError('password'))
+  })
+
+  test('Should return 400 if phone is provided', () => {
+
+  });
+
+  test('Should return 400 if phone is provided', () => {
+    const sut = new SignupController()
+    const httpRequest = {
+      body: { 
+        name: 'any_name',
+        email: 'any_name',
+        password: 'any_password',
+        // phone: 'any_phone',
+      }
+    }
+  })
+
+  test('Should return 400 if cpfCpnj is provided', ()=> {
+    const sut = new SignupController()
+    const httpRequest = {
+      body: { 
+        name: 'any_name',
+        email: 'any_name',
+        password: 'any_password',
+        phone: 'any_phone',
+        // cpfCnpj: 'any_cpfCnpj'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse?.statusCode).toBe(400)
+    expect(httpResponse?.body).toEqual(new MissingParamError('cpfCnpj'))
+  })
 })
