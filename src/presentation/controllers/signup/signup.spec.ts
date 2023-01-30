@@ -230,5 +230,29 @@ describe('Signup Controller', () => {
     expect(httpResponse?.statusCode).toBe(500)
     expect(httpResponse?.body).toEqual(new ServerError())
   })
+  
+  test('Should call AddAccount with corrent values', ()=> {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        phone: 'any_phone',
+        cpfCnpj: 'any_cpfCnpj'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse?.statusCode).toBe(200)
+    expect(httpResponse?.body).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'valid_password',
+      phone: 'valid_phone',
+      cpfCnpj: 'valid_cpfCnpj'
+    })
+  })
+
 
 })
