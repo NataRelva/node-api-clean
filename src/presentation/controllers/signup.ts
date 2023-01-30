@@ -1,3 +1,4 @@
+import { AddAccount } from '../../domain/useCases/add-account'
 import { MissingParamError, InvalidParamError } from '../errors/index'
 import { badRequest, serverError } from '../helpers/http.helper'
 import { Controller, HttpRequest, HttpResponse, EmailValidator } from '../protocols/index'
@@ -5,8 +6,13 @@ import { Controller, HttpRequest, HttpResponse, EmailValidator } from '../protoc
 export class SignupController implements Controller {
 
   private readonly emailValidator: EmailValidator
-  constructor(emailValidator: EmailValidator) {
+  private readonly addAccountStub: AddAccount
+  constructor(
+    emailValidator: EmailValidator,
+    addAccount: AddAccount
+  ) {
     this.emailValidator = emailValidator
+    this.addAccountStub = addAccount
   }
 
   handle (httpRequest: HttpRequest): HttpResponse {
@@ -24,6 +30,8 @@ export class SignupController implements Controller {
       if (!emailIsValid) { 
         return badRequest(new InvalidParamError('email'))
       }
+
+      this.addAccountStub.add(httpRequest.body)
 
       return { 
         statusCode: 200,
