@@ -7,7 +7,7 @@
     "build": "npx tsc --outDir ./dist index.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
-    "test:unit": "npm test -- --watch -c jest-unit.config.js",
+    "test:unit": "npm test -- --watch -c ./jest-unit.config.js",
     "test:staged": "npm test -- --findRelatedTests",
     "test:integration": "npm test -- --watch -c jest-integration.config.js",
     "test:commit": "jest",
