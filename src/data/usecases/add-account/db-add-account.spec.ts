@@ -103,4 +103,18 @@ describe('DbAddAaccount Usecase', () => {
             cpfCnpj: '11174235497'
         })
     })
+
+    test('Should throw if AddAccountRepository throws', async () => {
+        const { sut, addAccountRepositoryStub } = makeSut()
+        jest.spyOn(addAccountRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolver, reject) => reject(new Error('Mock error'))))
+        const accountData = {
+            name: 'name',
+            phone: '999888822',
+            email: 'email',
+            password: 'password',
+            cpfCnpj: '11174235497'
+        }
+        const promise = sut.add(accountData)
+        expect(promise).rejects.toThrow()
+    })
 })
