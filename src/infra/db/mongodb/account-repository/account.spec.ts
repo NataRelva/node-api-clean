@@ -21,6 +21,11 @@ if (MONGO_URI) {
             await mongoHelper.close()
         })
 
+        beforeEach(async () => {
+            const accountCollection = await mongoHelper.getCollection('accounts')
+            await accountCollection.deleteMany({})
+        })
+
         test('Shoul return an account on success', async () => {
             const sut = new AccountMongoRepository()
             const account = await sut.add({
