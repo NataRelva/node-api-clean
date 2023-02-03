@@ -6,5 +6,6 @@
         "allowJs": true,
         "strictNullChecks": true,
         "esModuleInterop": true,
+        "moduleResolution": "node16",
     }
 }

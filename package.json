@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc --outDir ./dist index.ts",
-    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand --detectOpenHandles --forceExit",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
@@ -40,7 +40,8 @@
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.1.0",
-    "mongodb": "^4.13.0",
+    "dotenv": "^16.0.3",
+    "mongodb": "^5.0.0",
     "validator": "^13.7.0"
   }
 }
