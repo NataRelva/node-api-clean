@@ -1,5 +1,6 @@
 export class ServerError extends Error {
-    constructor() {
-        super('Error in the server')
+    constructor(msg?: string) {
+        if (msg) super(msg)
+        else super('Internal server error')
     }
 } 
