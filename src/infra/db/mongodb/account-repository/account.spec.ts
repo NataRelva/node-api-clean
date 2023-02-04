@@ -1,20 +1,18 @@
-import { MongoHelper } from "../helpers/mongo-helper";
+import mongoHelper from "../helpers/mongo-helper";
 import { AccountMongoRepository } from "./account";
 
 import dotenv from 'dotenv'
 import path from "path";
 
 dotenv.config({ path: path.join('.env') })
+const mongoUri = process.env.MONGO_URI
 
-const MONGO_URI = process.env.MONGO_URI
-
-if (MONGO_URI) {
-    const mongoHelper = new MongoHelper(MONGO_URI)
+if (mongoUri) {
 
     describe("Account Mongo Repository", () => {
 
         beforeAll(async () => {
-            await mongoHelper.connect()
+            await mongoHelper.connect(mongoUri)
         })
 
         afterAll(async () => {
