@@ -1,11 +1,7 @@
 import { AccountModel } from '../../../../domain/models/account';
 import { AddAccountModel } from '../../../../domain/useCases/add-account';
 import { AddAccountRepository } from '../../.././../data/protocols/add-account-repository'
-import { MongoHelper } from "../helpers/mongo-helper";
-
-
-const uri = process.env.MONGO_URL || 'mongodb://localhost:27017/clean-node-api'
-const mongoHelper = new MongoHelper(uri)
+import mongoHelper from "../helpers/mongo-helper";
 
 export class AccountMongoRepository implements AddAccountRepository {
 
