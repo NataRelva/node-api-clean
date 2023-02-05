@@ -1,0 +1,16 @@
+import { DbAddAccount } from '../../data/usecases/add-account/db-add-account'
+import { BcryptAdapter } from '../../infra/criptography/bcrypt-adapter'
+import { AccountMongoRepository } from '../../infra/db/mongodb/account-repository/account'
+import { SignupController } from '../../presentation/controllers/signup/signup'
+import { CpfCnpjValidatorAdapter, ValidatorCpfCnpj } from '../../utils/cpf-cnpj-validator.adapter'
+import { EmailValidatorAdapter } from '../../utils/email-validator-adapter'
+
+export const makeSignupController = (): SignupController => {
+    const validatorCpfCnpj = new ValidatorCpfCnpj()
+    const bcryptAdapter = new BcryptAdapter(12)
+    const addAccount = new DbAddAccount(bcryptAdapter, new AccountMongoRepository())
+    const emailValidator = new EmailValidatorAdapter()
+    const cpfCnpjValidator = new CpfCnpjValidatorAdapter(validatorCpfCnpj)
+    const signupController = new SignupController(emailValidator, addAccount, cpfCnpjValidator)
+    return signupController
+}
