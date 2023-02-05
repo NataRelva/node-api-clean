@@ -1,8 +1,7 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
+import { adaptRoute } from "../adapters/express-route-adpter";
 import { makeSignupController } from "../factories/singup"
 
 export default function (router: Router): void {
-    router.post("/singup", (req: Request, res: Response) => {
-        return makeSignupController().handle(req);
-    });
+    router.post("/singup", adaptRoute(makeSignupController()));
 }
