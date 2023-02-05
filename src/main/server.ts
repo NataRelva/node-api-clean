@@ -1,10 +1,14 @@
+import MongoHelper from '../infra/db/mongodb/helpers/mongo-helper';
+import env from './config/env';
 
-import dotenv from 'dotenv';
-import app from './config/app';
-dotenv.config();
+async function start() {
+    try {
+        await MongoHelper.connect(env.mongoUrl);
+        const app = (await import('./config/app.ts' ? './config/app.ts' : './config/app.js')).default;
+        app.listen(env.port, () => console.log(`Server running at http://localhost:${env.port}`));
+    } catch (error) {
+        console.error(error);
+    }
+}
 
-const port = process.env.SERVER_PORT || 3001;
-
-app.listen(port, () => {
-    console.log('Server is running on port http://localhost:' + port);
-});
+start();
