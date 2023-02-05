@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 
-export default (router: Router): void => {
-    router.post("/signup", (req, res) => {
-        res.send("Signup route");
+export default function (router: Router): void {
+    router.post("/singup", (req: Request, res: Response) => {
+        res.status(200).json({ message: "OK" });
     });
 }
