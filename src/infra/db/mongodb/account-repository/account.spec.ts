@@ -1,26 +1,27 @@
-import mongoHelper from "../helpers/mongo-helper";
+import { MongoHelper } from "../helpers/mongo-helper";
 import { AccountMongoRepository } from "./account";
-
 import dotenv from 'dotenv'
-import path from "path";
 
-dotenv.config({ path: path.join('.env') })
+dotenv.config()
+
 const mongoUri = process.env.MONGO_URI
+
+if (!mongoUri) throw new Error('MONGO_URI not found')
 
 if (mongoUri) {
 
     describe("Account Mongo Repository", () => {
 
         beforeAll(async () => {
-            await mongoHelper.connect(mongoUri)
+            await MongoHelper.connect(mongoUri)
         })
 
         afterAll(async () => {
-            await mongoHelper.close()
+            await MongoHelper.close()
         })
 
         beforeEach(async () => {
-            const accountCollection = await mongoHelper.getCollection('accounts')
+            const accountCollection = await MongoHelper.getCollection('accounts')
             await accountCollection.deleteMany({})
         })
 

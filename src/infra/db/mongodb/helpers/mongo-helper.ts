@@ -1,18 +1,21 @@
 import { MongoClient, Collection } from "mongodb";
 
-export default {
+export const MongoHelper = {
+    uri: null as unknown as string,
     client: null as unknown as MongoClient,
-    connect(uri: string): Promise<void> {
+    async connect(uri: string): Promise<void> {
+        this.uri = uri;
         this.client = new MongoClient(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        return this.client.connect();
+        return await this.client.connect();
     },
-    close(): Promise<void> {
-        return this.client.close();
+    async close(): Promise<void> {
+        await this.client.close();
     },
-    getCollection(name: string): Collection {
+    async getCollection(name: string): Promise<Collection> {
+
         return this.client.db().collection(name);
     }
 }

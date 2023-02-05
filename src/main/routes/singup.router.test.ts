@@ -1,6 +1,6 @@
 import app from "../config/app"
-const supertest = require("supertest")
-import MongoHelper from "../../infra/db/mongodb/helpers/mongo-helper"
+import supertest from "supertest"
+import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper"
 const request = supertest(app)
 
 describe('Singup Router', () => {
@@ -15,7 +15,7 @@ describe('Singup Router', () => {
     })
 
     beforeEach(async () => {
-        const accountCollection = MongoHelper.getCollection('accounts')
+        const accountCollection = await MongoHelper.getCollection('accounts')
         await accountCollection.deleteMany({})
     })
 
