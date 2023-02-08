@@ -1,16 +1,39 @@
-import { InvalidParamError, MissingParamError,ServerError  } from '../../errors/index'
-import {AccountModel, AddAccount, EmailValidator} from './signup-protocols'
+import { InvalidParamError, MissingParamError, ServerError } from '../../errors/index'
+import { AccountModel, AddAccount, EmailValidator } from './signup-protocols'
 import { SignupController } from './signup'
 import { CpfCnpjValidator } from '../../protocols/cpf-cnpj-validator'
+import { Validation } from '../../helpers/validators/validations'
 
-type SutTypes = { 
+type SutTypes = {
   sut: SignupController,
   emailValidatorStub: EmailValidator,
   addAccountStub: AddAccount,
-  validatorCpfCnpj: CpfCnpjValidator
+  validatorCpfCnpj: CpfCnpjValidator,
+  validationStub: Validation
 }
 
-const makeEmailValidator = (): EmailValidator => { 
+const makeHttpRequest = (): any => {
+  return {
+    body: {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password',
+      phone: 'any_phone',
+      cpfCnpj: '11174235497'
+    }
+  }
+}
+
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate(input: any): Error | null {
+      return null
+    }
+  }
+  return new ValidationStub()
+}
+
+const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
     isValid(email: string): boolean {
       return true
@@ -32,16 +55,18 @@ const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const addAccountStub = makeAddAccount()
   const validatorCpfCnpj = makeCpfCnpjValidator()
-  const sut = new SignupController(emailValidatorStub, addAccountStub, validatorCpfCnpj)
+  const validationStub = makeValidation()
+  const sut = new SignupController(emailValidatorStub, addAccountStub, validatorCpfCnpj, validationStub)
   return {
     sut,
     emailValidatorStub,
     addAccountStub,
-    validatorCpfCnpj
+    validatorCpfCnpj,
+    validationStub
   }
 }
 
-const makeAddAccount = () => { 
+const makeAddAccount = () => {
   class AddAccountStub implements AddAccount {
     async add(account: AccountModel): Promise<AccountModel> {
       const fakeAccount = {
@@ -60,7 +85,7 @@ const makeAddAccount = () => {
 
 
 describe('Signup Controller', () => {
-  
+
   test('Should return 400 if name is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
@@ -93,7 +118,7 @@ describe('Signup Controller', () => {
     expect(httpResponse?.body).toEqual(new MissingParamError('email'))
   });
 
-  test('Should return 400 if password is provided', async () => { 
+  test('Should return 400 if password is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -111,7 +136,7 @@ describe('Signup Controller', () => {
   test('Should return 400 if phone is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
-      body: { 
+      body: {
         name: 'any_name',
         email: 'any_name',
         password: 'any_password',
@@ -123,10 +148,10 @@ describe('Signup Controller', () => {
     expect(httpResponse?.statusCode).toBe(400)
   })
 
-  test('Should return 400 if cpfCpnj is provided', async ()=> {
+  test('Should return 400 if cpfCpnj is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
-      body: { 
+      body: {
         name: 'any_name',
         email: 'any_name',
         password: 'any_password',
@@ -140,11 +165,11 @@ describe('Signup Controller', () => {
     expect(httpResponse?.body).toEqual(new MissingParamError('cpfCnpj'))
   })
 
-  test('Should return 400 if invalid email is provided', async ()=> {
+  test('Should return 400 if invalid email is provided', async () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
     const httpRequest = {
-      body: { 
+      body: {
         name: 'any_name',
         email: 'invalid_email',
         password: 'any_password',
@@ -158,11 +183,11 @@ describe('Signup Controller', () => {
     expect(httpResponse?.body).toEqual(new InvalidParamError('email'))
   })
 
-  test('Should call EmailValidator with correct email', async ()=> {
+  test('Should call EmailValidator with correct email', async () => {
     const { sut, emailValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
     const httpRequest = {
-      body: { 
+      body: {
         name: 'any_name',
         email: 'valid_email@email.com',
         password: 'any_password',
@@ -175,15 +200,15 @@ describe('Signup Controller', () => {
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email)
   })
 
-  test('Should return 500 if invalid EmailValidar throws', async ()=> {
-    const {sut, emailValidatorStub} = makeSut()
+  test('Should return 500 if invalid EmailValidar throws', async () => {
+    const { sut, emailValidatorStub } = makeSut()
 
-    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(()=> {
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
       throw new Error()
     })
 
     const httpRequest = {
-      body: { 
+      body: {
         name: 'any_name',
         email: 'invalid_email',
         password: 'any_password',
@@ -197,7 +222,7 @@ describe('Signup Controller', () => {
     expect(httpResponse?.body).toEqual(new ServerError())
   })
 
-  test('Should call AddAccount with corrent values', async ()=> {
+  test('Should call AddAccount with corrent values', async () => {
     const { sut, addAccountStub } = makeSut()
     const addSpy = jest.spyOn(addAccountStub, 'add')
     const httpRequest = {
@@ -221,13 +246,13 @@ describe('Signup Controller', () => {
 
   })
 
-  test('Should return 500 if invalid add account throws', async ()=> {
-    const {sut, addAccountStub} = makeSut()
-    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(()=> {
+  test('Should return 500 if invalid add account throws', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(() => {
       throw new Error()
     })
     const httpRequest = {
-      body: { 
+      body: {
         name: 'any_name',
         email: 'invalid_email',
         password: 'any_password',
@@ -240,8 +265,8 @@ describe('Signup Controller', () => {
     expect(httpResponse?.statusCode).toBe(500)
     expect(httpResponse?.body).toEqual(new ServerError())
   })
-  
-  test('Should call AddAccount with corrent values', async ()=> {
+
+  test('Should call AddAccount with corrent values', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -264,8 +289,8 @@ describe('Signup Controller', () => {
     })
   })
 
-  test('Shuld return 200 cpf or cnpj when valid cpfCnjp', async ()=> {
-    const { sut, validatorCpfCnpj} = makeSut()
+  test('Shuld return 200 cpf or cnpj when valid cpfCnjp', async () => {
+    const { sut, validatorCpfCnpj } = makeSut()
     jest.spyOn(validatorCpfCnpj, 'isValid').mockReturnValueOnce(true)
     const httpRequest = {
       body: {
@@ -280,8 +305,8 @@ describe('Signup Controller', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  test('Shuld return 400 cpf or cnpj when invalid cpfCnjp', async ()=> {
-    const { sut, validatorCpfCnpj} = makeSut()
+  test('Shuld return 400 cpf or cnpj when invalid cpfCnjp', async () => {
+    const { sut, validatorCpfCnpj } = makeSut()
     jest.spyOn(validatorCpfCnpj, 'isValid').mockReturnValueOnce(false)
     const httpRequest = {
       body: {
@@ -296,8 +321,8 @@ describe('Signup Controller', () => {
     expect(response.statusCode).toBe(400)
   })
 
-  test('isValid in CpjCnpj validator return true when valid', async ()=> {
-    const { sut, validatorCpfCnpj} = makeSut()
+  test('isValid in CpjCnpj validator return true when valid', async () => {
+    const { sut, validatorCpfCnpj } = makeSut()
     const isValidCpjCnpj = jest.spyOn(validatorCpfCnpj, 'isValid')
     const httpRequest = {
       body: {
@@ -310,6 +335,14 @@ describe('Signup Controller', () => {
     }
     await sut.handle(httpRequest);
     expect(isValidCpjCnpj).toHaveReturnedWith(true)
+  })
+
+  test('Should call Validation with correct value', async () => {
+    const { sut, validationStub } = makeSut()
+    const validationSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest);
+    expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 
 })
