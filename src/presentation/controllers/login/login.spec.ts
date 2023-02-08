@@ -1,7 +1,6 @@
 import { MissingParamError } from "../../errors/missing-param.error"
-import { EmailValidator } from "./login-protocols"
+import { EmailValidator, badRequest, serverError, unauthorized, ok } from "./login-protocols"
 import { LoginController } from "./login"
-import { badRequest, serverError, unauthorized } from "../../helpers/http.helper"
 import { InvalidParamError } from "../../errors/invalid-param.error"
 import { Authentication } from "../../../domain/useCases/authentication"
 
@@ -14,7 +13,7 @@ type SutTypes = {
 const makeAuthentication = (): Authentication => {
     class AuthenticationStub implements Authentication {
         async auth(email: string, password: string): Promise<string> {
-            return new Promise(resolve => resolve('any_token'))
+            return new Promise(resolve => resolve('sou_pirata_solitário_sei_mais_nada'))
         }
     }
 
@@ -137,6 +136,18 @@ describe('Login Controller', () => {
         }
         const httpResponse = await sut.handle(httpRequest)
         expect(httpResponse).toEqual(unauthorized())
+    })
+
+    test('Should call Authentication with correct values', async () => {
+        const { sut } = makeSut()
+        const httpRequest = {
+            body: {
+                email: "natan.danilo@gmail.com",
+                password: "hunterxhunter"
+            }
+        }
+        const httpResponse = await sut.handle(httpRequest)
+        expect(httpResponse).toEqual(ok({ accessToken: 'sou_pirata_solitário_sei_mais_nada' }))
     })
 
 })
