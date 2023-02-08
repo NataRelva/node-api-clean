@@ -1,7 +1,7 @@
 import { MissingParamError } from "../../errors/missing-param.error";
 import { Controller, HttpRequest, HttpResponse } from "../signup/signup-protocols";
 import { EmailValidator } from "../signup/signup-protocols";
-import { badRequest, serverError, unauthorized } from "../../helpers/http.helper";
+import { badRequest, ok, serverError, unauthorized } from "../../helpers/http.helper";
 import { InvalidParamError } from "../../errors/invalid-param.error";
 import { Authentication } from "../../../domain/useCases/authentication";
 
@@ -25,9 +25,9 @@ export class LoginController implements Controller {
         try {
             const isValidEmail = this.emailValidator.isValid(email);
             if (!isValidEmail) return badRequest(new InvalidParamError('email'));
-            const isPasswordValid = await this.authentication.auth(email, password);
-            if (!isPasswordValid) return unauthorized();
-            return await new Promise(resolve => resolve({ statusCode: 200, body: {} }));
+            const accessToken = await this.authentication.auth(email, password);
+            if (!accessToken) return unauthorized();
+            return ok({ accessToken })
         } catch (error) {
             return serverError();
         }
