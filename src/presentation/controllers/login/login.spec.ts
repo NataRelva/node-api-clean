@@ -3,7 +3,8 @@ import { EmailValidator } from "./login-protocols"
 import { LoginController } from "./login"
 
 type SutTypes = {
-    sut: LoginController
+    sut: LoginController,
+    emailValidatorStub: EmailValidator
 }
 
 const makeEmailValidator = (): EmailValidator => {
@@ -19,7 +20,8 @@ const makeSut = (): SutTypes => {
     const emailValidatorStub = makeEmailValidator()
     const sut = new LoginController(emailValidatorStub)
     return {
-        sut
+        sut,
+        emailValidatorStub
     }
 }
 
@@ -48,5 +50,18 @@ describe('Login Controller', () => {
         const httpResponse = await sut.handle(httpRequest)
         expect(httpResponse.statusCode).toBe(400)
         expect(httpResponse.body).toEqual(new MissingParamError('password'))
+    })
+
+    test('Should call email validator with correct email', async () => {
+        const { sut, emailValidatorStub } = makeSut()
+        const emailValid = jest.spyOn(emailValidatorStub, 'isValid')
+        const httpRequest = {
+            body: {
+                email: "nata@gmail.com",
+                password: "hunterxhunter"
+            }
+        }
+        await sut.handle(httpRequest)
+        expect(emailValid).toHaveBeenCalledWith(httpRequest.body.email)
     })
 })
