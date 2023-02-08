@@ -64,4 +64,17 @@ describe('Login Controller', () => {
         await sut.handle(httpRequest)
         expect(emailValid).toHaveBeenCalledWith(httpRequest.body.email)
     })
+
+    test('Should by return 400 if email is not provided', async () => {
+        const { sut, emailValidatorStub } = makeSut()
+        jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
+        const httpRequest = {
+            body: {
+                email: "natan@gmail.com",
+                password: "hunterxhunter"
+            }
+        }
+        const httpResponse = await sut.handle(httpRequest)
+        expect(httpResponse.statusCode).toBe(400)
+    })
 })
