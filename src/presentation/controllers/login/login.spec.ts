@@ -1,7 +1,7 @@
 import { MissingParamError } from "../../errors/missing-param.error"
 import { EmailValidator } from "./login-protocols"
 import { LoginController } from "./login"
-import { badRequest, serverError } from "../../helpers/http.helper"
+import { badRequest, serverError, unauthorized } from "../../helpers/http.helper"
 import { InvalidParamError } from "../../errors/invalid-param.error"
 import { Authentication } from "../../../domain/useCases/authentication"
 
@@ -123,4 +123,20 @@ describe('Login Controller', () => {
         await sut.handle(httpRequest)
         expect(authSpy).toHaveBeenCalledWith(httpRequest.body.email, httpRequest.body.password)
     })
+
+    test('Should call Authentication with correct values', async () => {
+        const { sut, authentication } = makeSut()
+        jest.spyOn(authentication, 'auth').mockReturnValueOnce(new Promise(resolve => {
+            resolve('')
+        }))
+        const httpRequest = {
+            body: {
+                email: "natan.danilo@gmail.com",
+                password: "hunterxhunter"
+            }
+        }
+        const httpResponse = await sut.handle(httpRequest)
+        expect(httpResponse).toEqual(unauthorized())
+    })
+
 })
