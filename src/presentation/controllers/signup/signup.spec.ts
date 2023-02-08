@@ -3,6 +3,7 @@ import { AccountModel, AddAccount, EmailValidator } from './signup-protocols'
 import { SignupController } from './signup'
 import { CpfCnpjValidator } from '../../protocols/cpf-cnpj-validator'
 import { Validation } from '../../helpers/validators/validations'
+import { badRequest } from '../login/login-protocols'
 
 type SutTypes = {
   sut: SignupController,
@@ -344,5 +345,15 @@ describe('Signup Controller', () => {
     await sut.handle(httpRequest);
     expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
   })
+
+
+  test('Shuld return 400 if Validation return an error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest = makeHttpRequest()
+    const response = await sut.handle(httpRequest);
+    expect(response).toEqual(badRequest(new Error()))
+  })
+
 
 })
