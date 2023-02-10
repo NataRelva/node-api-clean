@@ -1,7 +1,7 @@
 import { CpfCnpjValidatorAdapter, ValidatorCPFCNPJ, ValidatorCpfCnpj } from "../../../utils/cpf-cnpj-validator.adapter"
 import { InvalidParamError } from "../../errors/invalid-param.error"
 import { CpfCnpjValidator } from "../../protocols/cpf-cnpj-validator"
-import { badRequest } from "../http.helper"
+import { badRequest } from "../http/http.helper"
 import { CpfCnpjFieldsValidation } from "./cpfcnpj-fields.validations"
 
 const make = () => {
