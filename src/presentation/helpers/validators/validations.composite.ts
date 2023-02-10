@@ -1,4 +1,4 @@
-import { Validation } from './validations'
+import { Validation } from '../validators'
 
 export class ValidationComposite implements Validation {
     private readonly validations: Validation[]
@@ -9,9 +9,7 @@ export class ValidationComposite implements Validation {
     validate(input: any): Error | null {
         for (const validation of this.validations) {
             const error = validation.validate(input)
-            if (error) {
-                return error
-            }
+            if (error) return error
         }
         return null
     }
