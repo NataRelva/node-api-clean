@@ -90,7 +90,7 @@ describe('DbAuthentication UseCase', () => {
 
     test('Should return null if LoadAccountByEmailRepository  return null', async () => {
         const { sut, loadAccountByEmailRepository } = makeSut()
-        jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockReturnValueOnce(null)
+        jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockReturnValueOnce(new Promise((resolve) => resolve(null)))
         const accesToken = await sut.auth(makeFakeRequest())
         expect(accesToken).toBeNull()
     })

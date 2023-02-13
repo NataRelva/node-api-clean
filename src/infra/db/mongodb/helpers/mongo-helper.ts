@@ -15,7 +15,10 @@ export const MongoHelper = {
         await this.client.close();
     },
     async getCollection(name: string): Promise<Collection> {
-
         return this.client.db().collection(name);
+    },
+    map: (data: any): any => {
+        const { _id, ...collectionWithoutId } = data;
+        return Object.assign({}, collectionWithoutId, { id: _id });
     }
 }
