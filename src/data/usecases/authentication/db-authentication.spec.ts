@@ -3,12 +3,14 @@ import { AccountModel } from "../add-account/db-add-account.protocols"
 import { DbAuthentication } from "./db-authentication"
 import { HashComparer } from "../../protocols/criptography/hash-comparer"
 import { TokenGeneration } from "../../protocols/criptography/token-generation"
+import { UpdateAccessTokenRepository } from "../../protocols/db/update-access-token.repository"
 
 interface TypeSut {
     sut: DbAuthentication,
     loadAccountByEmailRepository: LoadAccountByEmailRepository,
     hashComparerStub: HashComparer,
-    tokenGeneration: TokenGeneration
+    tokenGeneration: TokenGeneration,
+    updateAccessTokenRepositoryStub: UpdateAccessTokenRepository
 }
 
 const makeFakeRequest = (): { email: string, password: string } => {
@@ -56,12 +58,22 @@ const makeTokenGeneration = (): TokenGeneration => {
     return new TokenGenerationStub()
 }
 
+const makeUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
+    class UpdateAccessTokenRepositoryStub implements UpdateAccessTokenRepository {
+        async updateAccessToken(id: string, token: string): Promise<void> {
+            return new Promise(resolver => resolver())
+        }
+    }
+    return new UpdateAccessTokenRepositoryStub()
+}
+
 const makeSut = (): TypeSut => {
     const loadAccountByEmailRepository = makeLoadAccountByEmailRepository()
     const hashComparerStub = makeHashComparer()
     const tokenGeneration = makeTokenGeneration()
-    const sut = new DbAuthentication(loadAccountByEmailRepository, hashComparerStub, tokenGeneration)
-    return { sut, loadAccountByEmailRepository, hashComparerStub, tokenGeneration }
+    const updateAccessTokenRepositoryStub = makeUpdateAccessTokenRepository()
+    const sut = new DbAuthentication(loadAccountByEmailRepository, hashComparerStub, tokenGeneration, updateAccessTokenRepositoryStub)
+    return { sut, loadAccountByEmailRepository, hashComparerStub, tokenGeneration, updateAccessTokenRepositoryStub }
 }
 
 describe('DbAuthentication UseCase', () => {
@@ -119,5 +131,19 @@ describe('DbAuthentication UseCase', () => {
         const { sut } = makeSut()
         const accesToken = await sut.auth(makeFakeRequest())
         expect(accesToken).toBe('valid_token')
+    })
+
+    test('Should call UpdateAccessTokenRepository with correct values', async () => {
+        const { sut, updateAccessTokenRepositoryStub } = makeSut()
+        const updateSpy = jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken')
+        await sut.auth(makeFakeRequest())
+        expect(updateSpy).toHaveBeenCalledWith(makeFakeAccount().id, 'valid_token')
+    })
+
+    test('Should throw if UpdateAccessTokenRepository throws', async () => {
+        const { sut, updateAccessTokenRepositoryStub } = makeSut()
+        jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken').mockReturnValueOnce(new Promise((resolver, reject) => reject(new Error())))
+        const promise = sut.auth(makeFakeRequest())
+        expect(promise).rejects.toThrow()
     })
 })
