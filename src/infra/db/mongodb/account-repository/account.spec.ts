@@ -71,6 +71,17 @@ if (mongoUri) {
             const account = await sut.loadByEmail(makeFakeAccountData().email)
             expect(account).toBeFalsy()
         })
+
+        test('Shoul update the account accessToken on updateAccessToken success', async () => {
+            const { sut } = makeSut()
+            const responseCollection = await accountCollection.insertOne(makeFakeAccountData())
+            await sut.updateAccessToken(responseCollection.insertedId, 'any_token')
+            const account = await accountCollection.findOne({ _id: responseCollection.insertedId })
+            expect(account).toBeTruthy()
+            if (account) {
+                expect(account.accessToken).toBe('any_token')
+            }
+        })
     })
 } else {
     throw new Error('MONGO_URI not found')
