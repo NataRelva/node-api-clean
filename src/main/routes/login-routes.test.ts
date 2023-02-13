@@ -3,7 +3,7 @@ import supertest from "supertest"
 import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper"
 const request = supertest(app)
 
-describe('Singup Router', () => {
+describe('Login Router', () => {
 
     beforeAll(async () => {
         if (!process.env.MONGO_URL) throw new Error('MongoDB server not initialized')
@@ -19,18 +19,19 @@ describe('Singup Router', () => {
         await accountCollection.deleteMany({})
     })
 
-    test('Should return an account on succss', async () => {
-        const account = {
-            name: 'any_name',
-            email: '',
-            phone: '',
-            password: '',
-            cpfCnpj: '',
-        }
+    describe('POST /signup', () => {
+        test('Should return an account on singup', async () => {
+            const response = await request
+                .post('/api/singup')
+                .send({
+                    name: 'any_name',
+                    email: '',
+                    phone: '',
+                    password: '',
+                    cpfCnpj: '',
+                })
 
-        const response = await request
-            .post('/api/singup')
-            .send(account)
-
+            // expect(response.status).toBe(200)
+        })
     })
 })
