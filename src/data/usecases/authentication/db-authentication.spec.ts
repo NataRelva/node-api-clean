@@ -1,9 +1,5 @@
-import { LoadAccountByEmailRepository } from "../../protocols/db/load-account-by-email.repository"
-import { AccountModel } from "../add-account/db-add-account.protocols"
+import { LoadAccountByEmailRepository, HashComparer, TokenGeneration, UpdateAccessTokenRepository, AccountModel } from "./db-authentication.protocols"
 import { DbAuthentication } from "./db-authentication"
-import { HashComparer } from "../../protocols/criptography/hash-comparer"
-import { TokenGeneration } from "../../protocols/criptography/token-generation"
-import { UpdateAccessTokenRepository } from "../../protocols/db/update-access-token.repository"
 
 interface TypeSut {
     sut: DbAuthentication,
