@@ -1,10 +1,12 @@
 import { LoadAccountByEmailRepository } from "../../protocols/db/load-account-by-email.repository"
 import { AccountModel } from "../add-account/db-add-account.protocols"
 import { DbAuthentication } from "./db-authentication"
+import { HashComparer } from "../../protocols/criptography/hash-comparer"
 
 interface TypeSut {
     sut: DbAuthentication,
-    loadAccountByEmailRepository: LoadAccountByEmailRepository
+    loadAccountByEmailRepository: LoadAccountByEmailRepository,
+    hashComparerStub: HashComparer
 }
 
 const makeFakeRequest = (): { email: string, password: string } => {
@@ -33,10 +35,20 @@ const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
     return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeHashComparer = (): HashComparer => {
+    class HashComparerStub implements HashComparer {
+        async compare(value: string, hash: string): Promise<boolean> {
+            return new Promise(resolver => resolver(true))
+        }
+    }
+    return new HashComparerStub()
+}
+
 const makeSut = (): TypeSut => {
     const loadAccountByEmailRepository = makeLoadAccountByEmailRepository()
-    const sut = new DbAuthentication(loadAccountByEmailRepository)
-    return { sut, loadAccountByEmailRepository }
+    const hashComparerStub = makeHashComparer()
+    const sut = new DbAuthentication(loadAccountByEmailRepository, hashComparerStub)
+    return { sut, loadAccountByEmailRepository, hashComparerStub }
 }
 
 describe('DbAuthentication UseCase', () => {
@@ -60,5 +72,12 @@ describe('DbAuthentication UseCase', () => {
         jest.spyOn(loadAccountByEmailRepository, 'load').mockReturnValueOnce(null)
         const accesToken = await sut.auth(makeFakeRequest())
         expect(accesToken).toBeNull()
+    })
+
+    test('Should call HashComparer with correct password', async () => {
+        const { sut, hashComparerStub } = makeSut()
+        const comparerSpy = jest.spyOn(hashComparerStub, 'compare')
+        await sut.auth(makeFakeRequest())
+        expect(comparerSpy).toHaveBeenLastCalledWith(makeFakeRequest().password, makeFakeAccount().password)
     })
 })
