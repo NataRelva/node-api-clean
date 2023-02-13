@@ -27,7 +27,7 @@ const makeFakeAccount = (): AccountModel => ({
 
 const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
     class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
-        async load(value: string): Promise<AccountModel> {
+        async loadByEmail(value: string): Promise<AccountModel> {
             const account: AccountModel = makeFakeAccount()
             return new Promise(resolver => resolver(account))
         }
@@ -75,7 +75,7 @@ const makeSut = (): TypeSut => {
 describe('DbAuthentication UseCase', () => {
     test('Should call LoadAccountByEmailRepository with correct email', async () => {
         const { sut, loadAccountByEmailRepository } = makeSut()
-        const loadSpy = jest.spyOn(loadAccountByEmailRepository, 'load')
+        const loadSpy = jest.spyOn(loadAccountByEmailRepository, 'loadByEmail')
         await sut.auth(makeFakeRequest())
         // Espero que seja chamado pelo metodo correto 
         expect(loadSpy).toHaveBeenLastCalledWith('email@email.com')
@@ -83,14 +83,14 @@ describe('DbAuthentication UseCase', () => {
 
     test('Should throw if LoadAccountByEmailRepository ', async () => {
         const { sut, loadAccountByEmailRepository } = makeSut()
-        jest.spyOn(loadAccountByEmailRepository, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+        jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
         const response = sut.auth(makeFakeRequest())
         expect(response).rejects.toThrow()
     })
 
     test('Should return null if LoadAccountByEmailRepository  return null', async () => {
         const { sut, loadAccountByEmailRepository } = makeSut()
-        jest.spyOn(loadAccountByEmailRepository, 'load').mockReturnValueOnce(null)
+        jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockReturnValueOnce(null)
         const accesToken = await sut.auth(makeFakeRequest())
         expect(accesToken).toBeNull()
     })
