@@ -11,12 +11,12 @@ describe('Bcrypt Adapter', () => {
     test('Should call bcrypt with correct value', async () => {
         const sut = new BcryptAdapter(12)
         const hashSpy = jest.spyOn(bcrypt, 'hash')
-        await sut.encrypt('anything')
+        await sut.hash('anything')
         expect(hashSpy).toHaveBeenCalledWith('anything', 12)
     })
     test('Should return a hash on success', async () => {
         const sut = new BcryptAdapter(12)
-        const hash = await sut.encrypt('anything')
+        const hash = await sut.hash('anything')
         expect(hash).toBe('anythingHash')
     })
 })

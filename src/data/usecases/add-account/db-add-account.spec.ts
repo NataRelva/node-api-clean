@@ -1,8 +1,8 @@
 import { DbAddAccount } from "./db-add-account"
-import { AccountModel, AddAccountModel, Encrypter, AddAccountRepository } from "./db-add-account.protocols"
+import { AccountModel, AddAccountModel, Hasher, AddAccountRepository } from "./db-add-account.protocols"
 
 class EncrypterStub {
-    async encrypt(value: string): Promise<string> {
+    async hash(value: string): Promise<string> {
         return new Promise(resolver => resolver('passwordHash'))
     }
 }
@@ -35,8 +35,8 @@ const makeStubAddAccountRepositoryStub = (): AddAccountRepositoryStub => {
 }
 
 const makeEncrypter = () => {
-    class EncrypterStub implements Encrypter {
-        async encrypt(value: string): Promise<string> {
+    class EncrypterStub implements Hasher {
+        async hash(value: string): Promise<string> {
             return new Promise(resolve => resolve('hashed_password'))
         }
     }
@@ -56,9 +56,9 @@ const makeSut = (): SutReturn => {
 }
 
 describe('DbAddAaccount Usecase', () => {
-    test('Should call Encrypter with correct password', async () => {
+    test('Should call Hasher with correct password', async () => {
         const { sut, encrypterStub } = makeSut()
-        const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
+        const encryptSpy = jest.spyOn(encrypterStub, 'hash')
         const accountData = {
             name: 'name',
             phone: '999888822',
@@ -70,9 +70,9 @@ describe('DbAddAaccount Usecase', () => {
         expect(encryptSpy).toHaveBeenCalledWith('password')
     })
 
-    test('Should throw if Encrypter throws', async () => {
+    test('Should throw if Hasher throws', async () => {
         const { sut, encrypterStub } = makeSut()
-        jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(new Promise((resolver, reject) => reject(new Error('Mock error'))))
+        jest.spyOn(encrypterStub, 'hash').mockReturnValueOnce(new Promise((resolver, reject) => reject(new Error('Mock error'))))
         const accountData = {
             name: 'name',
             phone: '999888822',
