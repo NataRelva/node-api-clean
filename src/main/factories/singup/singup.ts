@@ -1,12 +1,12 @@
 import { DbAddAccount } from '../../../data/usecases/add-account/db-add-account'
 import { BcryptAdapter } from '../../../infra/criptography/bcrypt-adpter/bcrypt-adapter'
-import { AccountMongoRepository } from '../../../infra/db/mongodb/account-repository/account'
-import { LogMongoRepository } from '../../../infra/db/mongodb/log-repository/log'
-import { SignupController } from '../../../presentation/controllers/signup/signup'
+import { AccountMongoRepository } from '../../../infra/db/mongodb/account-repository/account-mongo.repository'
+import { LogMongoRepository } from '../../../infra/db/mongodb/log-repository/log-mongo.repository'
+import { SignupController } from '../../../presentation/controllers/signup/signup-controllers'
 import { Controller } from '../../../presentation/protocols/controller'
 import { CpfCnpjValidatorAdapter, ValidatorCpfCnpj } from '../../../utils/cpf-cnpj-validator.adapter'
 import { EmailValidatorAdapter } from '../../../utils/email-validator-adapter'
-import { LogControllerDecorator } from '../../decorators/logs'
+import { LogControllerDecorator } from '../../decorators/log-controller-decoration/logs'
 import { makeSignupValidation } from './singup.validation'
 
 export const makeSignupController = (): Controller => {

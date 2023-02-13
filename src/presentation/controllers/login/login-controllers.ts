@@ -1,6 +1,6 @@
 import { MissingParamError } from "../../errors/missing-param.error";
-import { Controller, HttpRequest, HttpResponse } from "../signup/signup-protocols";
-import { EmailValidator } from "../signup/signup-protocols";
+import { Controller, HttpRequest, HttpResponse } from "../signup/signup-controllers-protocols";
+import { EmailValidator } from "../signup/signup-controllers-protocols";
 import { badRequest, ok, serverError, unauthorized } from "../../helpers/http/http.helper";
 import { InvalidParamError } from "../../errors/invalid-param.error";
 import { Authentication } from "../../../domain/useCases/authentication";

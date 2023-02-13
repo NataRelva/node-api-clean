@@ -1,9 +1,9 @@
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors/index'
-import { AccountModel, AddAccount, EmailValidator } from './signup-protocols'
-import { SignupController } from './signup'
+import { AccountModel, AddAccount, EmailValidator } from './signup-controllers-protocols'
+import { SignupController } from './signup-controllers'
 import { CpfCnpjValidator } from '../../protocols/cpf-cnpj-validator'
 import { Validation } from '../../helpers/validators/validations'
-import { badRequest } from '../login/login-protocols'
+import { badRequest } from '../login/login-controllers-protocols'
 
 type SutTypes = {
   sut: SignupController,

@@ -1,11 +1,8 @@
-import { MissingParamError } from "../../errors/missing-param.error"
-import { EmailValidator, badRequest, serverError, unauthorized, ok } from "./login-protocols"
-import { LoginController } from "./login"
-import { InvalidParamError } from "../../errors/invalid-param.error"
+import { badRequest, serverError } from "./login-controllers-protocols"
+import { LoginController } from "./login-controllers"
+
 import { Authentication, AuthenticationModel } from "../../../domain/useCases/authentication"
 import { Validation } from "../../helpers/validators/validations"
-import { ValidationComposite } from "../../helpers/validators/validations.composite"
-import { ServerError } from "../../errors/server-error"
 
 type SutTypesLogin = {
     validation: Validation,
