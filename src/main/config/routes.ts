@@ -1,5 +1,4 @@
 import { Express, Router } from 'express';
-import { ServerError } from '../../presentation/errors/index';
 import fs from 'fs';
 
 export default (app: Express): void => {
