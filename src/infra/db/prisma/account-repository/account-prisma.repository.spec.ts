@@ -34,7 +34,7 @@ const makeFakeAccountData = (): AccountFake => ({
 
 describe("Account Prisma Repository", () => {
     test("Shoul return an account on success", async () => {
-        const sut = new AccountPrismaRepository(prisma)
+        const sut = new AccountPrismaRepository()
         const account = await sut.add(makeFakeAccountData())
         expect(account).toBeTruthy()
         expect(account.id).toBeTruthy()
@@ -42,7 +42,7 @@ describe("Account Prisma Repository", () => {
     })
 
     test("Shoul return an account on loadByEmail success", async () => {
-        const sut = new AccountPrismaRepository(prisma)
+        const sut = new AccountPrismaRepository()
         await sut.add(makeFakeAccountData())
         const account = await sut.loadByEmail(makeFakeAccountData().email)
         expect(account).toBeTruthy()
@@ -52,13 +52,13 @@ describe("Account Prisma Repository", () => {
     })
 
     test("Shoul return null if loadByEmail fails", async () => {
-        const sut = new AccountPrismaRepository(prisma)
+        const sut = new AccountPrismaRepository()
         const account = await sut.loadByEmail(makeFakeAccountData().email)
         expect(account).toBeFalsy()
     })
 
     test("Shoul update the account accessToken on updateAccessToken success", async () => {
-        const sut = new AccountPrismaRepository(prisma)
+        const sut = new AccountPrismaRepository()
         const reponseAccount = await sut.add(makeFakeAccountData())
         await sut.updateAccessToken(reponseAccount.id, 'any_token')
         const account = await sut.findOne({ id: reponseAccount.id })

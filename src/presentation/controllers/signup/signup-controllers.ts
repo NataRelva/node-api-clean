@@ -4,14 +4,14 @@ import { ok } from '../../helpers/http/http.helper'
 import { Validation } from '../../helpers/validators/validations'
 
 export class SignupController implements Controller {
-  private readonly addAccountStub: AddAccount
+  private readonly addAccount: AddAccount
   private readonly validation: Validation
 
   constructor(
     addAccount: AddAccount,
     validation: Validation
   ) {
-    this.addAccountStub = addAccount
+    this.addAccount = addAccount
     this.validation = validation
   }
 
@@ -20,7 +20,7 @@ export class SignupController implements Controller {
       const error = this.validation.validate(httpRequest.body)
       if (error) return badRequest(error)
 
-      const account = await this.addAccountStub.add(httpRequest.body)
+      const account = await this.addAccount.add(httpRequest.body)
       return ok(account)
 
     } catch (error) {

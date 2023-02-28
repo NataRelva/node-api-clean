@@ -14,6 +14,7 @@ export class CpfCnpjFieldsValidation implements Validation {
     }
 
     validate(input: any): Error | null {
+        if (!input[this.fieldName]) return new InvalidParamError(this.fieldName)
         const cpfOrCpnjIsValid = this.cpfCnpjValidator.isValid(input[this.fieldName])
         if (!cpfOrCpnjIsValid) return new InvalidParamError(input[this.fieldName])
         return null

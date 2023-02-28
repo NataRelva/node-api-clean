@@ -1,22 +1,22 @@
+import { PrismaHelper } from './../../infra/db/prisma/helpers/prisma-helper';
 import app from "../config/app"
 import supertest from "supertest"
-import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper"
+
 const request = supertest(app)
+const prisma = PrismaHelper.getPrisma()
 
 describe('Login Router', () => {
 
     beforeAll(async () => {
-        if (!process.env.MONGO_URL) throw new Error('MongoDB server not initialized')
-        await MongoHelper.connect(process.env.MONGO_URL)
+        await PrismaHelper.connect()
     })
 
     afterAll(async () => {
-        await MongoHelper.close()
+        await PrismaHelper.disconnect()
     })
 
     beforeEach(async () => {
-        const accountCollection = await MongoHelper.getCollection('accounts')
-        await accountCollection.deleteMany({})
+        await prisma.account.deleteMany({})
     })
 
     describe('POST /signup', () => {

@@ -18,7 +18,7 @@ describe('Log Prisma Repository', () => {
 
     test('Should log error stack to database', async () => {
         const stack = 'Error stack trace';
-        const logPrismaRepository = new LogPrismaRepository(prisma);
+        const logPrismaRepository = new LogPrismaRepository();
         await logPrismaRepository.logError(stack);
         const logs = await prisma.log.findMany();
         expect(logs).toHaveLength(1);
