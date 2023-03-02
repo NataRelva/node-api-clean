@@ -1,18 +1,22 @@
+import { ErrorHandler } from './../../protocols/error-handler';
 import { Controller, HttpRequest, HttpResponse, AddAccount } from './signup-controllers-protocols'
-import { badRequest, serverError } from '../../helpers/http/http.helper'
+import { badRequest } from '../../helpers/http/http.helper'
 import { ok } from '../../helpers/http/http.helper'
 import { Validation } from '../../helpers/validators/validations'
 
 export class SignupController implements Controller {
   private readonly addAccount: AddAccount
   private readonly validation: Validation
+  private readonly errorHandler: ErrorHandler
 
   constructor(
     addAccount: AddAccount,
-    validation: Validation
+    validation: Validation,
+    errorHandler: ErrorHandler
   ) {
     this.addAccount = addAccount
     this.validation = validation
+    this.errorHandler = errorHandler
   }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -24,7 +28,7 @@ export class SignupController implements Controller {
       return ok(account)
 
     } catch (error) {
-      return serverError()
+      return this.errorHandler.handle(error)
     }
 
   }

@@ -1,3 +1,4 @@
+import { ErrorHandler } from './../../protocols/error-handler';
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors/index'
 import { AccountModel, AddAccount, EmailValidator } from './signup-controllers-protocols'
 import { SignupController } from './signup-controllers'
@@ -50,10 +51,23 @@ const makeCpfCnpjValidator = (): CpfCnpjValidator => {
   return new CpfCnpjValidatorStub();
 }
 
+const makeErrorHandler = (): ErrorHandler => {
+  class ErrorHandlerStub implements ErrorHandler {
+    handle(error: Error): any {
+      return {
+        statusCode: 500,
+        body: new ServerError()
+      }
+    }
+  }
+  return new ErrorHandlerStub()
+}
+
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeValidation()
-  const sut = new SignupController(addAccountStub, validationStub)
+  const errorHandler = makeErrorHandler()
+  const sut = new SignupController(addAccountStub, validationStub, errorHandler)
   return {
     sut,
     validationStub,
@@ -142,6 +156,40 @@ describe('Signup Controller', () => {
     const httpRequest = makeHttpRequest()
     const response = await sut.handle(httpRequest);
     expect(response).toEqual(badRequest(new Error()))
+  })
+
+  test('Should return 400 if an invalid email is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'invalid_email',
+        password: 'any_password',
+        phone: 'any_phone',
+        cpfCnpj: 'any_cpfCnpj'
+      }
+    }
+    jest.spyOn(sut, 'handle').mockReturnValueOnce(new Promise(resolver => resolver(badRequest(new InvalidParamError('email')))))
+    const response = await sut.handle(httpRequest)
+    expect(sut.handle).toHaveBeenCalledWith(httpRequest)
+    expect(response).toEqual(badRequest(new InvalidParamError('email')))
+  })
+
+  test('Should return 400 if an invalid cpfCnpj is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        phone: 'any_phone',
+        cpfCnpj: 'invalid_cpfCnpj'
+      }
+    }
+    jest.spyOn(sut, 'handle').mockReturnValueOnce(new Promise(resolver => resolver(badRequest(new InvalidParamError('cpfCnpj')))))
+    const response = await sut.handle(httpRequest)
+    expect(sut.handle).toHaveBeenCalledWith(httpRequest)
+    expect(response).toEqual(badRequest(new InvalidParamError('cpfCnpj')))
   })
 
 })

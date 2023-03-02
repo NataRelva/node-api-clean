@@ -1,3 +1,4 @@
+import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';
 import { AccountPrismaRepository } from './../../../infra/db/prisma/account-repository/account-prisma.repository';
 import { LogPrismaRepository } from './../../../infra/db/prisma/log-repository/log-prisma-reposutory';
 import { DbAddAccount } from '../../../data/usecases/add-account/db-add-account'
@@ -11,7 +12,8 @@ export const makeSignupController = (): Controller => {
     const bcryptAdapter = new BcryptAdapter(12)
     const addAccount = new DbAddAccount(bcryptAdapter, new AccountPrismaRepository())
     const validationComposite = makeSignupValidation()
-    const signupController = new SignupController(addAccount, validationComposite)
+    const errorHandler = new ErrorHandlerAdapter();
+    const signupController = new SignupController(addAccount, validationComposite, errorHandler)
     const logPrismaRepository = new LogPrismaRepository()
     return new LogControllerDecorator(signupController, logPrismaRepository)
 }
