@@ -1,3 +1,5 @@
+import { CheckRegistrationAdapter } from './../../../infra/registration/check-registration-adpter';
+import { CheckRegistration } from './../../../presentation/protocols/check-registration';
 import { JwtAdapter } from './../../../infra/criptography/jwt-adpter/jwt-adapter';
 import { DbAuthentication } from './../../../data/usecases/authentication/db-authentication';
 import { Authentication } from './../../../domain/useCases/authentication';
@@ -11,10 +13,13 @@ import { Controller } from '../../../presentation/protocols/controller'
 import { LogControllerDecorator } from '../../decorators/log-controller-decoration/logs'
 import { makeSignupValidation } from './singup.validation'
 import env from '../../config/env';
+import { CheckRegistrationRepository } from '../../../infra/db/prisma/registration/check-registration-repository';
 
 export const makeSignupController = (): Controller => {
     const bcryptAdapter = new BcryptAdapter(12)
-    const addAccount = new DbAddAccount(bcryptAdapter, new AccountPrismaRepository())
+    const checkRegistrationRepository = new CheckRegistrationRepository()
+    const checkRegistration = new CheckRegistrationAdapter(checkRegistrationRepository)
+    const addAccount = new DbAddAccount(bcryptAdapter, new AccountPrismaRepository(), checkRegistration)
     const validationComposite = makeSignupValidation()
     const errorHandler = new ErrorHandlerAdapter();
     const jwtAdapter = new JwtAdapter(env.jwtSecret)

@@ -1,3 +1,4 @@
+import { CheckRegistration } from './../../../presentation/protocols/check-registration';
 import { DbAddAccount } from "./db-add-account"
 import { AccountModel, AddAccountModel, Hasher, AddAccountRepository } from "./db-add-account.protocols"
 
@@ -23,7 +24,8 @@ class AddAccountRepositoryStub implements AddAccountRepository {
 type SutReturn = {
     sut: DbAddAccount,
     encrypterStub: EncrypterStub,
-    addAccountRepositoryStub: AddAccountRepository
+    addAccountRepositoryStub: AddAccountRepository,
+    checkRegistration: CheckRegistration
 }
 
 const makeStub = (): EncrypterStub => {
@@ -44,14 +46,26 @@ const makeEncrypter = () => {
     return new EncrypterStub()
 }
 
+const makeCheckRegistration = () => {
+    class CheckRegistrationStub implements CheckRegistration {
+        async check(cpfCnpj: string, email: string): Promise<void> {
+            return new Promise(resolve => resolve())
+        }
+    }
+
+    return new CheckRegistrationStub()
+}
+
 const makeSut = (): SutReturn => {
     const encrypterStub = makeEncrypter()
     const addAccountRepositoryStub = makeStubAddAccountRepositoryStub()
-    const sut = new DbAddAccount(encrypterStub, addAccountRepositoryStub)
+    const checkRegistration = makeCheckRegistration()
+    const sut = new DbAddAccount(encrypterStub, addAccountRepositoryStub, checkRegistration)
     return {
         sut,
         encrypterStub,
-        addAccountRepositoryStub
+        addAccountRepositoryStub,
+        checkRegistration
     }
 }
 
@@ -136,5 +150,33 @@ describe('DbAddAaccount Usecase', () => {
             password: '',
             cpfCnpj: ''
         })
+    })
+
+    test('Should call CheckRegistration with correct values', async () => {
+        const { sut, checkRegistration } = makeSut()
+        const checkSpy = jest.spyOn(checkRegistration, 'check')
+        const accountData = {
+            name: 'name',
+            phone: '999888822',
+            email: 'email',
+            password: 'password',
+            cpfCnpj: '11174235497'
+        }
+        await sut.add(accountData)
+        expect(checkSpy).toHaveBeenCalledWith('11174235497', 'email')
+    })
+
+    test('Should throw if CheckRegistration throws', async () => {
+        const { sut, checkRegistration } = makeSut()
+        jest.spyOn(checkRegistration, 'check').mockReturnValueOnce(new Promise((resolver, reject) => reject(new Error('Mock error'))))
+        const accountData = {
+            name: 'name',
+            phone: '999888822',
+            email: 'email',
+            password: 'password',
+            cpfCnpj: '11174235497'
+        }
+        const promise = sut.add(accountData)
+        expect(promise).rejects.toThrow()
     })
 })

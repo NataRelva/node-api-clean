@@ -15,7 +15,7 @@ export class SignupController implements Controller {
     addAccount: AddAccount,
     validation: Validation,
     errorHandler: ErrorHandler,
-    authentication: Authentication
+    authentication: Authentication,
   ) {
     this.addAccount = addAccount
     this.validation = validation
