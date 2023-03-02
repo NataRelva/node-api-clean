@@ -1,8 +1,8 @@
+import { Authentication, AuthenticationModel } from './../../../domain/useCases/authentication';
 import { ErrorHandler } from './../../protocols/error-handler';
-import { InvalidParamError, MissingParamError, ServerError } from '../../errors/index'
-import { AccountModel, AddAccount, EmailValidator } from './signup-controllers-protocols'
+import { InvalidParamError, ServerError } from '../../errors/index'
+import { AccountModel, AddAccount } from './signup-controllers-protocols'
 import { SignupController } from './signup-controllers'
-import { CpfCnpjValidator } from '../../protocols/cpf-cnpj-validator'
 import { Validation } from '../../helpers/validators/validations'
 import { badRequest } from '../login/login-controllers-protocols'
 
@@ -10,6 +10,17 @@ type SutTypes = {
   sut: SignupController,
   validationStub: Validation,
   addAccountStub: AddAccount,
+  authentication: Authentication
+}
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth(authentication: AuthenticationModel): Promise<string> {
+      return new Promise(resolve => resolve('sou_pirata_solitário_sei_mais_nada'))
+    }
+  }
+
+  return new AuthenticationStub()
 }
 
 const makeHttpRequest = (): any => {
@@ -33,24 +44,6 @@ const makeValidation = (): Validation => {
   return new ValidationStub()
 }
 
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid(email: string): boolean {
-      return true
-    }
-  }
-  return new EmailValidatorStub();
-}
-
-const makeCpfCnpjValidator = (): CpfCnpjValidator => {
-  class CpfCnpjValidatorStub implements CpfCnpjValidator {
-    isValid(cpfCnpj: string): boolean {
-      return true;
-    }
-  }
-  return new CpfCnpjValidatorStub();
-}
-
 const makeErrorHandler = (): ErrorHandler => {
   class ErrorHandlerStub implements ErrorHandler {
     handle(error: Error): any {
@@ -67,11 +60,13 @@ const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeValidation()
   const errorHandler = makeErrorHandler()
-  const sut = new SignupController(addAccountStub, validationStub, errorHandler)
+  const authentication = makeAuthentication()
+  const sut = new SignupController(addAccountStub, validationStub, errorHandler, authentication)
   return {
     sut,
     validationStub,
-    addAccountStub
+    addAccountStub,
+    authentication
   }
 }
 
@@ -132,14 +127,7 @@ describe('Signup Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse?.statusCode).toBe(200)
-    expect(httpResponse?.body).toEqual({
-      id: 'valid_id',
-      name: 'valid_name',
-      email: 'valid_email',
-      password: 'valid_password',
-      phone: 'valid_phone',
-      cpfCnpj: 'valid_cpfCnpj'
-    })
+    expect(httpResponse?.body).toEqual({ accessToken: "sou_pirata_solitário_sei_mais_nada" })
   })
 
   test('Should call Validation with correct value', async () => {
@@ -190,6 +178,23 @@ describe('Signup Controller', () => {
     const response = await sut.handle(httpRequest)
     expect(sut.handle).toHaveBeenCalledWith(httpRequest)
     expect(response).toEqual(badRequest(new InvalidParamError('cpfCnpj')))
+  })
+
+  test('Should return 400 if an invalid password is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'invalid_password',
+        phone: 'any_phone',
+        cpfCnpj: 'any_cpfCnpj'
+      }
+    }
+    jest.spyOn(sut, 'handle').mockReturnValueOnce(new Promise(resolver => resolver(badRequest(new InvalidParamError('password')))))
+    const response = await sut.handle(httpRequest)
+    expect(sut.handle).toHaveBeenCalledWith(httpRequest)
+    expect(response).toEqual(badRequest(new InvalidParamError('password')))
   })
 
 })
