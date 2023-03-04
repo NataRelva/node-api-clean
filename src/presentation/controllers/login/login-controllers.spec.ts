@@ -76,7 +76,7 @@ describe('Login Controller', () => {
         jest.spyOn(validation, 'validate').mockImplementationOnce(() => { throw new Error() })
         const httpRequest = makeHttpRequest()
         const response = await sut.handle(httpRequest)
-        expect(response).toEqual(serverError())
+        expect(response).toEqual(serverError(new Error()))
     })
 
 })

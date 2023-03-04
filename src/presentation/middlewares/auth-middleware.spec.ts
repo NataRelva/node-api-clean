@@ -1,3 +1,4 @@
+import { serverError } from './../helpers/http/http.helper';
 import { AccountModel } from './../../domain/models/account';
 import { LoadAccountByToken } from './../../domain/useCases/load-account-by-token';
 import { AuthMiddleware } from './auth-middleware';
@@ -10,9 +11,9 @@ interface SutTypes {
     loadAccountByTokenStup: LoadAccountByToken
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (role?: string): SutTypes => {
     const loadAccountByTokenStup = makeLoadAccountByTokenStup()
-    const sut = new AuthMiddleware(loadAccountByTokenStup)
+    const sut = new AuthMiddleware(loadAccountByTokenStup, role)
     return {
         sut,
         loadAccountByTokenStup
@@ -53,10 +54,11 @@ describe('Auth Middleware', () => {
     })
 
     test('Should call LoadAccountByToken with correct accessToken', async () => {
-        const { sut, loadAccountByTokenStup } = makeSut()
+        const role = 'any_role'
+        const { sut, loadAccountByTokenStup } = makeSut(role)
         const loadSpy = jest.spyOn(loadAccountByTokenStup, 'load')
         await sut.handle(httpRequest())
-        expect(loadSpy).toHaveBeenCalledWith('any_token')
+        expect(loadSpy).toHaveBeenCalledWith('any_token', role)
     })
 
     test('Should return Account if LoadAccountByToken succeeds', async () => {
@@ -66,5 +68,12 @@ describe('Auth Middleware', () => {
             statusCode: 200,
             body: makeFakeAccount()
         })
+    })
+
+    test('Should return 500 if LoadAccountByToken throws', async () => {
+        const { sut, loadAccountByTokenStup } = makeSut()
+        jest.spyOn(loadAccountByTokenStup, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+        const httpResponse = await sut.handle(httpRequest())
+        expect(httpResponse).toEqual(serverError(new Error()))
     })
 })
