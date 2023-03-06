@@ -1,10 +1,4 @@
-import { serverError } from './../helpers/http/http.helper';
-import { AccountModel } from './../../domain/models/account';
-import { LoadAccountByToken } from './../../domain/useCases/load-account-by-token';
-import { AuthMiddleware } from './auth-middleware';
-import { HttpRequest } from './../protocols/http';
-import { forbidden } from "../helpers/http/http.helper"
-import { AccessDeniedError } from "../errors"
+import { serverError, forbidden, AccessDeniedError, AccountModel, LoadAccountByToken, AuthMiddleware, HttpRequest } from './auth-middleware-protocols';
 
 interface SutTypes {
     sut: AuthMiddleware,
