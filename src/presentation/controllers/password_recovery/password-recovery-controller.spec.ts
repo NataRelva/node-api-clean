@@ -1,8 +1,19 @@
+import { Authentication } from './../../../domain/useCases/authentication';
+import { AccountModel } from './../../../domain/models/account';
 import { badRequest } from './../../helpers/http/http.helper';
 import { ErrorHandler } from './../../protocols/error-handler';
-import { SendEmailPasswordRecovery, IMessage } from './../../../domain/useCases/send-mail-recovery-password';
+import { SendEmailPasswordRecovery } from './../../../domain/useCases/send-mail-recovery-password';
 import { EmailValidator } from './../../protocols/email-validator';
 import { PasswordRecoveryController } from './password-recovery-controller';
+
+const makeAccountFake = (): AccountModel => ({
+    id: 'any_id',
+    name: 'any_name',
+    email: 'any_email@gmail.com',
+    password: 'any_password',
+    cpfCnpj: 'any_cpfCnpj',
+    phone: 'any_phone',
+})
 
 const makeSut = () => {
     class EmailValidatorStub implements EmailValidator {
@@ -11,7 +22,7 @@ const makeSut = () => {
         }
     }
     class SendEmailPasswordRecoveryStub implements SendEmailPasswordRecovery {
-        send(props: IMessage): Promise<void> {
+        send(account: AccountModel, accessToken: string): Promise<void> {
             return new Promise(resolve => resolve());
         }
     }
@@ -20,10 +31,22 @@ const makeSut = () => {
             return new Promise(resolve => resolve(badRequest(new Error('Email inválido'))));
         }
     }
+    class LoadAccountByEmailRepository implements LoadAccountByEmailRepository {
+        async loadByEmail(email: string): Promise<any> {
+            return new Promise(resolve => resolve(makeAccountFake()));
+        }
+    }
+    class AuthenticationStub implements Authentication {
+        async auth(account: AccountModel): Promise<string> {
+            return new Promise(resolve => resolve('any_token'));
+        }
+    }
+    const authenticationStub = new AuthenticationStub();
     const sendEmailPasswordRecoveryStub = new SendEmailPasswordRecoveryStub();
     const errorHandlerStub = new ErrorHandlerStub();
     const emailValidatorStub = new EmailValidatorStub();
-    const sut = new PasswordRecoveryController(emailValidatorStub, sendEmailPasswordRecoveryStub, errorHandlerStub);
+    const loadAccountByEmailRepository = new LoadAccountByEmailRepository();
+    const sut = new PasswordRecoveryController(emailValidatorStub, sendEmailPasswordRecoveryStub, loadAccountByEmailRepository, authenticationStub, errorHandlerStub);
     return {
         sut,
         emailValidatorStub,
@@ -48,7 +71,7 @@ describe('Password Recovery Controller', () => {
         const { sut, emailValidatorStub } = makeSut();
         const httpRequest = {
             body: {
-                email: 'any_email@gmail.com',
+                email: makeAccountFake().email,
             }
         }
         jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
@@ -62,24 +85,24 @@ describe('Password Recovery Controller', () => {
         const { sut, emailValidatorStub } = makeSut();
         const httpRequest = {
             body: {
-                email: 'any@gmail.com',
+                email: makeAccountFake().email,
             }
         }
         const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
         await sut.handle(httpRequest);
-        expect(isValidSpy).toHaveBeenCalledWith('any@gmail.com');
+        expect(isValidSpy).toHaveBeenCalledWith(makeAccountFake().email);
     })
 
     test('Should call SendEmailPasswordRecovery with correct email', async () => {
         const { sut, sendEmailPasswordRecoveryStub } = makeSut();
         const httpRequest = {
             body: {
-                email: 'any@gmail.com',
+                email: makeAccountFake().email,
             }
         }
         const sendSpy = jest.spyOn(sendEmailPasswordRecoveryStub, 'send');
         await sut.handle(httpRequest);
-        expect(sendSpy).toHaveBeenCalledWith({ to: 'any@gmail.com' });
+        expect(sendSpy).toHaveBeenCalledWith(makeAccountFake(), 'any_token');
     })
 
 

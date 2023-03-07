@@ -1,9 +1,5 @@
-export interface IMessage {
-    to: string
-    subject?: string
-    body?: string
-}
+import { AccountModel } from './../models/account';
 
 export interface SendEmailPasswordRecovery {
-    send(props: IMessage): Promise<void>
+    send(accountData: AccountModel, accessToken: string): Promise<void>
 }
