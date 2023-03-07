@@ -1,26 +1,24 @@
-import { CheckRegistration } from './../../protocols/check-registration';
-import { MailSend } from './../../../domain/useCases/mail-send';
+import { ErrorHandler } from './../../protocols/error-handler';
+import { SendEmailPasswordRecovery } from './../../../domain/useCases/send-mail-recovery-password';
 import { HttpRequest, HttpResponse } from './../../protocols/http';
-import { serverError, ok, badRequest } from './../../helpers/http/http.helper';
+import { ok, badRequest } from './../../helpers/http/http.helper';
 import { EmailValidator } from './../../protocols/email-validator';
 import { Controller } from './../../protocols/controller';
 export class PasswordRecoveryController implements Controller {
     constructor(
-        private readonly emailValidator: EmailValidator,
-        private readonly checkRegistration: CheckRegistration,
-        private readonly mailSend: MailSend
+        private readonly validator: EmailValidator,
+        private readonly sendEmailPasswordRecovery: SendEmailPasswordRecovery,
+        private readonly errorHandler: ErrorHandler
     ) { }
     async handle(request: HttpRequest): Promise<HttpResponse> {
         try {
             const { email } = request.body;
-            const isValid = this.emailValidator.isValid(email);
+            const isValid = this.validator.isValid(email)
             if (!isValid) return badRequest(new Error('Email inválido'));
-            const checkAccountAssociatedWithEmail = this.checkRegistration.check('', email);
-            if (!checkAccountAssociatedWithEmail) return badRequest(new Error('Email não cadastrado'));
-            await this.mailSend.sendMail(email, 'Recuperação de senha', 'password_recovery');
+            await this.sendEmailPasswordRecovery.send({ to: email });
             return ok('E-mail de recuperação de senha enviado com sucesso, verifique sua caixa de entrada.')
         } catch (error) {
-            return serverError(error);
+            return this.errorHandler.handle(error);
         }
     }
 }

@@ -1,3 +1,4 @@
+import { HttpResponse } from './http';
 export interface ErrorHandler {
-    handle(error: any): Promise<any>
+    handle(error: any): Promise<HttpResponse>
 }
