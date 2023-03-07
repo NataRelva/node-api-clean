@@ -67,4 +67,15 @@ describe("Account Prisma Repository", () => {
             expect(account.accessToken).toBe('any_token')
         }
     })
+
+    test("Shoul return an account on loadByToken without role", async () => {
+        const sut = new AccountPrismaRepository()
+        const reponseAccount = await sut.add(makeFakeAccountData())
+        await sut.updateAccessToken(reponseAccount.id, 'any_token')
+        const account = await sut.loadByToken('any_token')
+        expect(account).toBeTruthy()
+        if (account) {
+            expect(account.id).toBeTruthy()
+        }
+    })
 });
