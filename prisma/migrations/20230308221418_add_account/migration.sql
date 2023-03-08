@@ -6,7 +6,8 @@ CREATE TABLE "Account" (
     "password" TEXT NOT NULL,
     "cpfCnpj" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "accessToken" TEXT,
+    "accessToken" TEXT NOT NULL DEFAULT '',
+    "role" TEXT NOT NULL DEFAULT 'user',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -55,6 +56,9 @@ CREATE UNIQUE INDEX "Account_email_key" ON "Account"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_cpfCnpj_key" ON "Account"("cpfCnpj");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Account_accessToken_key" ON "Account"("accessToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Log_id_key" ON "Log"("id");

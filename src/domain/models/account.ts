@@ -5,4 +5,6 @@ export interface AccountModel {
     password: string
     phone: string
     cpfCnpj: string
+    accessToken?: string
+    role?: string
 }

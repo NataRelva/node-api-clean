@@ -14,8 +14,8 @@ model Account {
   password    String
   cpfCnpj     String   @unique
   phone       String
-  accessToken String?  @unique
-  role        String?  
+  accessToken String   @unique @default("")
+  role        String   @default("user")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

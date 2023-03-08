@@ -1,13 +1,15 @@
 import { AccountModel } from "../models/account"
 
-export interface AddAccountModel { 
+export interface AddAccountModel {
     name: string
     email: string
     password: string
     phone: string
     cpfCnpj: string
+    accessToken?: string
+    role?: string
 }
 
 export interface AddAccount {
-    add (account: AddAccountModel): Promise<AccountModel>
+    add(account: AddAccountModel): Promise<AccountModel>
 }

@@ -25,24 +25,6 @@ const makeSut = (): SutTypes => {
   }
 }
 
-const makeAddAccount = () => {
-  class AddAccountStub implements AddAccount {
-    async add(account: AccountModel): Promise<AccountModel> {
-      const fakeAccount = {
-        id: 'valid_id',
-        name: 'valid_name',
-        email: 'valid_email',
-        phone: 'valid_phone',
-        cpfCnpj: 'valid_cpfCnpj',
-        password: 'valid_password'
-      }
-      return new Promise(resolver => resolver(fakeAccount))
-    }
-  }
-  return new AddAccountStub()
-}
-
-
 describe('Email Validation', () => {
 
   test('Should return 500 if invalid EmailValidar throws', async () => {

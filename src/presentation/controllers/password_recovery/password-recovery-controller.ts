@@ -7,9 +7,10 @@ import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { ok, badRequest, unauthorized } from './../../helpers/http/http.helper';
 import { EmailValidator } from './../../protocols/email-validator';
 import { Controller } from './../../protocols/controller';
+import { ValidationComposite } from '../../helpers/validators/validations.composite';
 export class PasswordRecoveryController implements Controller {
     constructor(
-        private readonly validator: EmailValidator,
+        private readonly validator: ValidationComposite,
         private readonly sendEmailPasswordRecovery: SendEmailPasswordRecovery,
         private readonly loadAccountByEmail: LoadAccountByEmailRepository,
         private readonly authentication: Authentication,
@@ -18,11 +19,11 @@ export class PasswordRecoveryController implements Controller {
     async handle(request: HttpRequest): Promise<HttpResponse> {
         try {
             const { email } = request.body;
-            const isValid = this.validator.isValid(email)
+            const isValid = this.validator.validate(email)
             if (!isValid) return badRequest(new Error('Email inválido'));
             const account = await this.loadAccountByEmail.loadByEmail(email);
-            if (!account) return badRequest(new Error('Email inválido'));
-            const accessToken = await this.authentication.auth({ email, password: account.password });
+            if (!account) return badRequest(new Error('Email não cadastrado'));
+            const accessToken = account.accessToken;
             if (!accessToken) return unauthorized()
             await this.sendEmailPasswordRecovery.send(account, accessToken);
             return ok('E-mail de recuperação de senha enviado com sucesso, verifique sua caixa de entrada.')
