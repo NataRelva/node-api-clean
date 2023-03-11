@@ -7,4 +7,6 @@ export interface AccountModel {
     cpfCnpj: string
     accessToken?: string
     role?: string
+    passwordResetToken?: string
+    passwordResetExpires?: Date
 }

@@ -6,7 +6,7 @@ export class SendEmailPasswordRecoveryAdpter implements SendEmailPasswordRecover
     constructor(
         private readonly sendEmail: SendEmail
     ) { }
-    send(account: AccountModel, token: string): Promise<void> {
+    send(account: AccountModel): Promise<void> {
         const data: SendEmailData = {
             to: account.email,
             from: env.emailFrom,
@@ -14,7 +14,8 @@ export class SendEmailPasswordRecoveryAdpter implements SendEmailPasswordRecover
             templateId: env.templateIdRecoveryPassword,
             dynamicTemplateData: {
                 name: account.name,
-                token
+                email: account.email,
+                token: account.passwordResetToken
             }
         }
 

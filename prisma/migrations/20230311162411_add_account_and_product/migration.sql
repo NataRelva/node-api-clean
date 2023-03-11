@@ -8,6 +8,8 @@ CREATE TABLE "Account" (
     "phone" TEXT NOT NULL,
     "accessToken" TEXT NOT NULL DEFAULT '',
     "role" TEXT NOT NULL DEFAULT 'user',
+    "passwordResetToken" TEXT,
+    "passwordResetExpires" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -59,6 +61,9 @@ CREATE UNIQUE INDEX "Account_cpfCnpj_key" ON "Account"("cpfCnpj");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_accessToken_key" ON "Account"("accessToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Account_passwordResetToken_key" ON "Account"("passwordResetToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Log_id_key" ON "Log"("id");

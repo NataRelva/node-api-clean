@@ -1,6 +1,5 @@
 import { PrismaHelper } from './../helpers/prisma-helper';
 import { AccountPrismaRepository } from './account-prisma.repository';
-import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
 
 interface AccountFake {
     name: string

@@ -1,3 +1,5 @@
+import { JwtAdapter } from './../../../infra/criptography/jwt-adpter/jwt-adapter';
+import { DbPrepareAccountRecoverPassword } from './../../../data/usecases/prepare-account-recover-password/db-prepare-account-recover-password';
 import { makeDbAuthentication } from './../useCases/authentication/db-authentication';
 import { SendGridEmailProvider } from './../../../infra/email/sendgrid';
 import { SendEmailPasswordRecoveryAdpter } from './../../../presentation/emails/send-email-password-recovery';
@@ -10,12 +12,16 @@ import { ErrorHandlerAdapter } from '../../../utils/error-handler-adapter';
 import env from '../../config/env';
 export const makePasswordRecoveryController = (): Controller => {
     const validation = makeValidatorPasswordRecovery();
-    const loadAccountByEmail = new AccountPrismaRepository()
-    const authentication = makeDbAuthentication()
     const errorHandler = new ErrorHandlerAdapter()
+
     const sendGridEmailProvider = new SendGridEmailProvider(env.sendGridKey)
     const emailProvider = new SendEmailAdpter(sendGridEmailProvider)
     const sendEmailPasswordRecovery = new SendEmailPasswordRecoveryAdpter(emailProvider)
-    const passwordRecoveryController = new PasswordRecoveryController(validation, sendEmailPasswordRecovery, loadAccountByEmail, authentication, errorHandler);
+
+    const updatePasswordResetToken = new AccountPrismaRepository()
+    const random = new JwtAdapter(env.jwtSecret)
+    const prepareAccountRecoverPassword = new DbPrepareAccountRecoverPassword(updatePasswordResetToken, random)
+    
+    const passwordRecoveryController = new PasswordRecoveryController(prepareAccountRecoverPassword,sendEmailPasswordRecovery, validation, errorHandler);
     return passwordRecoveryController
 }
