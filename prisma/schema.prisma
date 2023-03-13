@@ -40,58 +40,70 @@ model RMouraProduct {
   categories RMouraCategoryProduct[]
   createdAt  DateTime                @default(now())
   updatedAt  DateTime                @updatedAt
+
+  @@map("rmoura_product")
 }
 
 model RMouraCategory {
   id        String                  @id @unique @default(uuid())
-  name      String
+  name      String                  @unique
   products  RMouraCategoryProduct[]
   createdAt DateTime                @default(now())
   updatedAt DateTime                @updatedAt
-}
 
-model RMouraCategoryProduct {
-  id         String         @id @unique @default(uuid())
-  category   RMouraCategory @relation(fields: [categoryId], references: [id])
-  categoryId String
-  product    RMouraProduct  @relation(fields: [productId], references: [id])
-  productId  String
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  @@map("rmoura_category")
 }
 
 model RMouraPackage {
   id        String                 @id @unique @default(uuid())
-  name      String
+  name      String                 @unique
   products  RMouraPackageProduct[]
   createdAt DateTime               @default(now())
   updatedAt DateTime               @updatedAt
+
+  @@map("rmoura_package")
 }
 
 model RMouraUnit {
   id        String              @id @unique @default(uuid())
-  name      String
+  name      String              @unique
   products  RMouraUnitProduct[]
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
+
+  @@map("rmoura_unit")
+}
+
+model RMouraCategoryProduct {
+  id         String         @id @unique @default(uuid())
+  category   RMouraCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  product    RMouraProduct  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  String
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@map("rmoura_category_product")
 }
 
 model RMouraPackageProduct {
   id        String        @id @unique @default(uuid())
-  package   RMouraPackage @relation(fields: [packageId], references: [id])
+  package   RMouraPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
   packageId String
-  product   RMouraProduct @relation(fields: [productId], references: [id])
+  product   RMouraProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 }
 
 model RMouraUnitProduct {
-  id        String        @id @unique @default(uuid())
-  unit      RMouraUnit    @relation(fields: [unitId], references: [id])
+  unit      RMouraUnit    @relation(fields: [unitId], references: [id], onDelete: Cascade)
   unitId    String
-  product   RMouraProduct @relation(fields: [productId], references: [id])
+  product   RMouraProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+
+  @@id([unitId, productId])
+  @@map("rmoura_unit_product")
 }

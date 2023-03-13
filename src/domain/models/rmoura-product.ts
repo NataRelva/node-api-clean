@@ -1,22 +1,22 @@
 export interface RMouraPackage {
   id: string
   name: string
-  products:  RmouraProduct[]
+  products:  RmouraProductModel[]
 }
 
 export interface RMouraUnit {
   id: string
   name: string
-  products: RmouraProduct[]
+  products: RmouraProductModel[]
 }
 
 export interface RMouraCategory {
   id: string
   name: string
-  products: RmouraProduct[]
+  products: RmouraProductModel[]
 }
 
-export interface RmouraProduct {
+export interface RmouraProductModel {
   id: string
   name: string
   weight: number
