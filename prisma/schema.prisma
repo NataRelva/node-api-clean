@@ -29,27 +29,69 @@ model Log {
   updatedAt DateTime @updatedAt
 }
 
-model Product {
-  id          String   @id @unique @default(uuid())
-  name        String
-  description String
-  price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model RMouraProduct {
+  id         String                  @id @unique @default(uuid())
+  name       String
+  weight     Float
+  unit       RMouraUnitProduct[]
+  obs        String
+  package    RMouraPackageProduct[]
+  price      Float
+  categories RMouraCategoryProduct[]
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
 }
 
-model Category {
-  id          String   @id @unique @default(uuid())
-  name        String
-  description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model RMouraCategory {
+  id        String                  @id @unique @default(uuid())
+  name      String
+  products  RMouraCategoryProduct[]
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
 }
 
-model ProductCategory {
-  id         String   @id @unique @default(uuid())
-  productId  String
+model RMouraCategoryProduct {
+  id         String         @id @unique @default(uuid())
+  category   RMouraCategory @relation(fields: [categoryId], references: [id])
   categoryId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  product    RMouraProduct  @relation(fields: [productId], references: [id])
+  productId  String
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model RMouraPackage {
+  id        String                 @id @unique @default(uuid())
+  name      String
+  products  RMouraPackageProduct[]
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+}
+
+model RMouraUnit {
+  id        String              @id @unique @default(uuid())
+  name      String
+  products  RMouraUnitProduct[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model RMouraPackageProduct {
+  id        String        @id @unique @default(uuid())
+  package   RMouraPackage @relation(fields: [packageId], references: [id])
+  packageId String
+  product   RMouraProduct @relation(fields: [productId], references: [id])
+  productId String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model RMouraUnitProduct {
+  id        String        @id @unique @default(uuid())
+  unit      RMouraUnit    @relation(fields: [unitId], references: [id])
+  unitId    String
+  product   RMouraProduct @relation(fields: [productId], references: [id])
+  productId String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
