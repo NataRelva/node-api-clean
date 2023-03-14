@@ -1,11 +1,23 @@
+export interface PriceFilter {
+  min: number,
+  max: number
+}
+
 export interface Filter {
   categoryId: string,
   unitId: string,
   packageId: string,
+  price: PriceFilter
+}
+
+export interface Pagination { 
+  page: number
+  limit: number
 }
 
 export interface FilterRequest { 
   filter: Filter
+  paginator: Pagination
   text: string
 }
 

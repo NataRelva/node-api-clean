@@ -10,7 +10,7 @@ export class PullProductsRmouraController implements Controller {
     private readonly handleError: ErrorHandlerAdapter,
   ) {}
   async handle(request: HttpRequest): Promise<any> {
-    const { filter } = request.body
+    const filter = request.body
     try {
       if (!filter) return badRequest(new MissingParamError('filter'))
       const products = await this.pullProductsRmoura.pull(filter)

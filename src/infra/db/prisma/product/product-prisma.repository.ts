@@ -1,108 +1,76 @@
-import { GetProductFilterRepository } from './../../../../data/protocols/db/product/get-products-filter.repository';
-import { RMouraPackage } from './../../../../domain/models/rmoura-product';
-
 import { PrismaClient } from '@prisma/client';
+
+import { FilterRequest } from './../../../../domain/models/product-configuration';
+import { PullProductsRmouraRepository } from './../../../../data/protocols/db/product/pull-products-products-repository';
+import { GetProductFilterRepository } from './../../../../data/protocols/db/product/get-products-filter.repository';
+import { RmouraProductModel } from './../../../../domain/models/rmoura-product';
 import { RmouraProduct } from './../../../../domain/useCases/register-rmoura-product';
 import { AddRmouraProductsRepository } from './../../../../data/protocols/db/product/add-rmoura-products.repository';
-export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+
+export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository {
+  constructor(private readonly prisma: PrismaClient) { }
 
   // ------------------ GetProductFilterRepository ------------------
-  async get(): Promise<any> { 
-    const units = await this.prisma.rMouraUnit.findMany()
-    const packages = await this.prisma.rMouraPackage.findMany()
-    const categories = await this.prisma.rMouraCategory.findMany()
+  async get(): Promise<any> {
+    const units = await this.prisma.rmouraUnit.findMany()
+    const packages = await this.prisma.rmouraPackage.findMany()
+    const categories = await this.prisma.rmouraCategory.findMany()
     return { units, packages, categories }
   }
 
   // ------------------ AddRmouraProductsRepository ------------------
-  private registerCategory = async (product: RmouraProduct): Promise<string> => { 
-    return new Promise(async (resolve, reject) => { 
-      let existingCategory = await this.prisma.rMouraCategory.findUnique({
-        where: { name: product.package },
-      });
-      // Se a categoria não existir, crie uma nova
-      if (!existingCategory) {
-        existingCategory = await this.prisma.rMouraCategory.create({
-          data: { name: product.package },
-        });
-      }
-      resolve(existingCategory.id)
-    })
-  }
 
-  private registerUnit = async (product: RmouraProduct): Promise<string> => { 
-    return new Promise(async (resolve, reject) => { 
-      let existingUnit = await this.prisma.rMouraUnit.findUnique({
-        where: { name: product.unit },
-      });
-    
-      // Se a categoria não existir, crie uma nova
-      if (!existingUnit) {
-        existingUnit = await this.prisma.rMouraUnit.create({
-          data: { name: product.unit },
-        });
-      }
-  
-      resolve(existingUnit.id)
-    })
-  }
+  async pullRmoura(props: FilterRequest): Promise<RmouraProductModel[]> {
+    const { filter, paginator, text } = props;
 
-  private registerPackage = async (product: RmouraProduct): Promise<string> => { 
-    return new Promise(async (resolve, reject) => { 
-      let existingPackage = await this.prisma.rMouraPackage.findUnique({
-        where: { name: product.package },
-      });
-    
-      // Se a categoria não existir, crie uma nova
-      if (!existingPackage) {
-        existingPackage = await this.prisma.rMouraPackage.create({
-          data: { name: product.package },
-        });
-      }
-      resolve(existingPackage.id)
-    })
+    const { page, limit } = paginator;
+
+    const { categoryId, unitId, packageId, price } = filter;
+
+    const { min = 0, max = Number.MAX_SAFE_INTEGER } = price;
+
+    const where = {
+      name: {
+        contains: text,
+      },
+      price: {
+        gte: min,
+        lte: max,
+      },
+      ...(categoryId && { category: { some: { id: categoryId } } }),
+      ...(unitId && { unit: { some: { id: unitId } } }),
+      ...(packageId && { package: { some: { id: packageId } } }),
+    };
+
+    const products = await this.prisma.rmouraProduct.findMany({
+      where,
+      include: {
+        unit: true,
+        category: true,
+        package: true,
+      },
+      take: limit,
+      skip: page !== 0 ? (page - 1) * limit : 0,
+    });
+
+    return products as any
   }
 
   async addRmoura(products: RmouraProduct[]): Promise<void> {
-    await this.prisma.rMouraProduct.deleteMany({})
-    for (const product of products) {
-      const idUnit = await this.registerUnit(product)
-      const idPackage = await this.registerPackage(product)
-      const idCategory = await this.registerCategory(product)
+    await this.prisma.rmouraProduct.deleteMany({});
 
-      const productCreat = await this.prisma.rMouraProduct.create({ 
+    for (const product of products) {
+      await this.prisma.rmouraProduct.create({
         data: {
           name: product.name,
           weight: product.weight,
           obs: product.obs,
           price: product.price,
-        }
-      })
-      
-      // Criar relacionamento entre produto e categoria (n:n)
-      await this.prisma.rMouraCategoryProduct.create({ 
-        data: { 
-          productId: productCreat.id,
-          categoryId: idCategory
-        }
-      })
-
-      // Criar relacionamento entre produto e unidade (n:n)
-      await this.prisma.rMouraUnitProduct.create({ 
-        data: { 
-          productId: productCreat.id,
-          unitId: idUnit
-        }
-      })
-
-      // Criar relacionamento entre produto e embalagem (n:n)
-      await this.prisma.rMouraPackageProduct.create({ 
-        data: { 
-          productId: productCreat.id,
-          packageId: idPackage
-        }
-      })
+          unit: { connectOrCreate: { create: { name: product.unit}, where: { name: product.unit } } },
+          category: { connectOrCreate: { create: { name: product.package }, where: { name: product.package } } },
+          package: { connectOrCreate: { create: { name: product.package }, where: { name: product.package } } },
+        },
+      });
     }
   }
 }
