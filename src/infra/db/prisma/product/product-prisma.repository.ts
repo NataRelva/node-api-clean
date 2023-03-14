@@ -57,8 +57,6 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository {
   async addRmoura(products: RmouraProduct[]): Promise<void> {
     await this.prisma.rMouraProduct.deleteMany({})
     for (const product of products) {
-      
-      // const idPackage = await this.registerPackge(product)
       const idUnit = await this.registerUnit(product)
       const idPackage = await this.registerPackage(product)
       const idCategory = await this.registerCategory(product)
@@ -95,8 +93,6 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository {
           packageId: idPackage
         }
       })
-
-     
     }
   }
 }
