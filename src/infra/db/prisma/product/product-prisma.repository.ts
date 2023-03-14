@@ -1,11 +1,21 @@
+import { GetProductFilterRepository } from './../../../../data/protocols/db/product/get-products-filter.repository';
 import { RMouraPackage } from './../../../../domain/models/rmoura-product';
 
 import { PrismaClient } from '@prisma/client';
 import { RmouraProduct } from './../../../../domain/useCases/register-rmoura-product';
 import { AddRmouraProductsRepository } from './../../../../data/protocols/db/product/add-rmoura-products.repository';
-export class ProductPrismaRepository implements AddRmouraProductsRepository {
+export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
+  // ------------------ GetProductFilterRepository ------------------
+  async get(): Promise<any> { 
+    const units = await this.prisma.rMouraUnit.findMany()
+    const packages = await this.prisma.rMouraPackage.findMany()
+    const categories = await this.prisma.rMouraCategory.findMany()
+    return { units, packages, categories }
+  }
+
+  // ------------------ AddRmouraProductsRepository ------------------
   private registerCategory = async (product: RmouraProduct): Promise<string> => { 
     return new Promise(async (resolve, reject) => { 
       let existingCategory = await this.prisma.rMouraCategory.findUnique({
