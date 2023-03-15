@@ -30,85 +30,74 @@ model Log {
 }
 
 model RmouraProduct {
-  id     String @id @unique @default(uuid())
-  name   String
-  weight Float
-  obs    String
-  price  Float
-
-  category RmouraCategory[]
-  unit     RmouraUnit[]
-  package  RmouraPackage[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String           @id @unique @default(uuid())
+  name      String
+  weight    Float
+  obs       String
+  price     Float
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  category  RmouraCategory[] @relation("RmouraCategoryToRmouraProduct")
+  package   RmouraPackage[]  @relation("RmouraPackageToRmouraProduct")
+  unit      RmouraUnit[]     @relation("RmouraProductToRmouraUnit")
 
   @@map("rmoura_product")
 }
 
 model RmouraUnit {
-  id   String @id @unique @default(uuid())
-  name String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  product RmouraProduct[]
+  id        String          @id @unique @default(uuid())
+  name      String          @unique
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  product   RmouraProduct[] @relation("RmouraProductToRmouraUnit")
 
   @@map("rmoura_unit")
 }
 
 model RmouraPackage {
-  id   String @id @unique @default(uuid())
-  name String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  product RmouraProduct[]
+  id        String          @id @unique @default(uuid())
+  name      String          @unique
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  product   RmouraProduct[] @relation("RmouraPackageToRmouraProduct")
 
   @@map("rmoura_package")
 }
 
 model RmouraCategory {
-  id   String @id @unique @default(uuid())
-  name String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  product RmouraProduct[]
+  id        String          @id @unique @default(uuid())
+  name      String          @unique
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  product   RmouraProduct[] @relation("RmouraCategoryToRmouraProduct")
 
   @@map("rmoura_category")
 }
 
 model CelmarProduct {
   id           String               @id @unique @default(uuid())
-  code         String               @unique
+  code         String
   name         String
-  package      CelmarPackage[]
   price        Float
-  mainCategory CelmarMainCategory[]
-  subCategory  CelmarSubCategory[]
+  mainCategory CelmarMainCategory[] @relation("CelmarMainCategoryToCelmarProduct")
+  package      CelmarPackage[]      @relation("CelmarPackageToCelmarProduct")
+  subCategory  CelmarSubCategory[]  @relation("CelmarProductToCelmarSubCategory")
 }
 
 model CelmarPackage {
-  id   String @id @unique @default(uuid())
-  name String @unique
-
-  product CelmarProduct[]
+  id      String          @id @unique @default(uuid())
+  name    String          @unique
+  product CelmarProduct[] @relation("CelmarPackageToCelmarProduct")
 }
 
 model CelmarMainCategory {
-  id   String @id @unique @default(uuid())
-  name String @unique
-
-  product CelmarProduct[]
+  id      String          @id @unique @default(uuid())
+  name    String          @unique
+  product CelmarProduct[] @relation("CelmarMainCategoryToCelmarProduct")
 }
 
 model CelmarSubCategory {
-  id   String @id @unique @default(uuid())
-  name String @unique
-
-  product CelmarProduct[]
+  id      String          @id @unique @default(uuid())
+  name    String          @unique
+  product CelmarProduct[] @relation("CelmarProductToCelmarSubCategory")
 }
