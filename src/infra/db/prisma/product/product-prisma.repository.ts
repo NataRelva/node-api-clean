@@ -60,7 +60,6 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository, Get
 
   async addRmoura(products: RmouraProduct[]): Promise<void> {
     await this.prisma.rmouraProduct.deleteMany({});
-
     for (const product of products) {
       await this.prisma.rmouraProduct.create({
         data: {
@@ -86,24 +85,9 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository, Get
           code: product.code,
           name: product.name,
           price: product.price,
-          package: {
-            connectOrCreate: {
-              create: { name: product.package },
-              where: { name: product.package },
-            }
-          },
-          mainCategory: { 
-            connectOrCreate: { 
-              create: { name: product.category_main },
-              where: { name: product.category_main },
-            }
-          },
-          subCategory: { 
-            connectOrCreate: { 
-              create: { name: product.category_sub },
-              where: { name: product.category_sub },
-            }
-          },
+          package: { connectOrCreate: { create: { name: product.package }, where: { name: product.package } } },
+          mainCategory: { connectOrCreate: { create: { name: product.category_main }, where: { name: product.category_main } } },
+          subCategory: { connectOrCreate: { create: { name: product.category_sub },  where: { name: product.category_sub } } },
         },
       });
     }
