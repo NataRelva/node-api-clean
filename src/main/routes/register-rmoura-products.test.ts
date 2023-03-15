@@ -1,4 +1,3 @@
-import { RMouraProduct } from '@prisma/client'
 import supertest from 'supertest'
 import app from '../config/app'
 
