@@ -1,5 +1,3 @@
-import { RmouraProduct } from './../../../../domain/useCases/register-rmoura-product';
-import { RmouraProductModel } from './../../../../domain/models/rmoura-product';
 import { PrismaClient } from '@prisma/client';
 import { ProductPrismaRepository } from './product-prisma.repository';
 
@@ -12,6 +10,18 @@ const makeFakeRmouraProducts = (): any => {
     package: 'any_package',
     price: 1,
     categories: 'any_categories',
+  }]
+}
+
+const makeFakeCelmarProducts = (): any => { 
+  return [{ 
+    name: 'any_name', 
+    weight: 1, 
+    unit: 'any_unit', 
+    obs: 'any_obs', 
+    package: 'any_package', 
+    price: 1, 
+    categories: 'any_categories', 
   }]
 }
 
