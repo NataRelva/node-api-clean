@@ -1,3 +1,5 @@
+import { AddCelmarProductsRepository } from './../../../../data/protocols/db/product/add-celmar-products.repository';
+import { RequestCelmarProduct } from './../../../../domain/useCases/register-products-celmar';
 import { PrismaClient } from '@prisma/client';
 
 import { FilterRequest } from './../../../../domain/models/product-configuration';
@@ -7,7 +9,7 @@ import { RmouraProductModel } from './../../../../domain/models/rmoura-product';
 import { RmouraProduct } from './../../../../domain/useCases/register-rmoura-product';
 import { AddRmouraProductsRepository } from './../../../../data/protocols/db/product/add-rmoura-products.repository';
 
-export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository {
+export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository, AddCelmarProductsRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
   // ------------------ GetProductFilterRepository ------------------
@@ -69,6 +71,39 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository, Get
           unit: { connectOrCreate: { create: { name: product.unit}, where: { name: product.unit } } },
           category: { connectOrCreate: { create: { name: product.package }, where: { name: product.package } } },
           package: { connectOrCreate: { create: { name: product.package }, where: { name: product.package } } },
+        },
+      });
+    }
+  }
+
+  // ------------------ AddCelmarProductsRepository ------------------
+
+  async addCelmar(products: RequestCelmarProduct[]): Promise<void> { 
+    await this.prisma.celmarProduct.deleteMany({});
+    for (const product of products) {
+      await this.prisma.celmarProduct.create({
+        data: {
+          code: product.code,
+          name: product.name,
+          price: product.price,
+          package: {
+            connectOrCreate: {
+              create: { name: product.package },
+              where: { name: product.package },
+            }
+          },
+          mainCategory: { 
+            connectOrCreate: { 
+              create: { name: product.category_main },
+              where: { name: product.category_main },
+            }
+          },
+          subCategory: { 
+            connectOrCreate: { 
+              create: { name: product.category_sub },
+              where: { name: product.category_sub },
+            }
+          },
         },
       });
     }

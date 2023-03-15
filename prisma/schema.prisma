@@ -81,3 +81,34 @@ model RmouraCategory {
 
   @@map("rmoura_category")
 }
+
+model CelmarProduct {
+  id           String               @id @unique @default(uuid())
+  code         String               @unique
+  name         String
+  package      CelmarPackage[]
+  price        Float
+  mainCategory CelmarMainCategory[]
+  subCategory  CelmarSubCategory[]
+}
+
+model CelmarPackage {
+  id   String @id @unique @default(uuid())
+  name String @unique
+
+  product CelmarProduct[]
+}
+
+model CelmarMainCategory {
+  id   String @id @unique @default(uuid())
+  name String @unique
+
+  product CelmarProduct[]
+}
+
+model CelmarSubCategory {
+  id   String @id @unique @default(uuid())
+  name String @unique
+
+  product CelmarProduct[]
+}
