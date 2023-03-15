@@ -1,14 +1,14 @@
+import { DbGetProductFilterRmouraRepository } from './db-get-product-filter-repository';
 import { GetProductFilterRepository } from './../../protocols/db/product/get-products-filter.repository';
-import { DbGetProductFilterRepository } from './db-get-product-filter-repository';
 
 interface SutTypes {
-  sut: DbGetProductFilterRepository
+  sut: DbGetProductFilterRmouraRepository
   getProductFilterRepositoryStub: GetProductFilterRepository
 }
 describe('DbGetProductFilterRepository', () => {
   const makeGetProductFilterRepositoryStub = (): GetProductFilterRepository => { 
     return new class GetProductFilterRepositoryStub implements GetProductFilterRepository {	 
-      async get(): Promise<any> { 
+      async getRmoura(): Promise<any> { 
         return new Promise(resolve => resolve({ 
           data: { 
             categories: [], 
@@ -18,11 +18,12 @@ describe('DbGetProductFilterRepository', () => {
           } 
         })) 
       }
+      async getCelmar(): Promise<any> { }
     }
   }
   const makeSut = (): SutTypes => { 
     const getProductFilterRepositoryStub = makeGetProductFilterRepositoryStub() 
-    const sut = new DbGetProductFilterRepository(getProductFilterRepositoryStub) 
+    const sut = new DbGetProductFilterRmouraRepository(getProductFilterRepositoryStub) 
     return { 
       sut, 
       getProductFilterRepositoryStub 
@@ -30,7 +31,7 @@ describe('DbGetProductFilterRepository', () => {
   }
   test('Should call GetProductFilterRepository with correct values', async () => { 
     const { sut, getProductFilterRepositoryStub } = makeSut() 
-    const getSpy = jest.spyOn(getProductFilterRepositoryStub, 'get') 
+    const getSpy = jest.spyOn(getProductFilterRepositoryStub, 'getRmoura') 
     await sut.exec() 
     expect(getSpy).toHaveBeenCalled() 
   })
@@ -50,7 +51,7 @@ describe('DbGetProductFilterRepository', () => {
 
   test('Should throw if GetProductFilterRepository throws', async () => { 
     const { sut, getProductFilterRepositoryStub } = makeSut() 
-    jest.spyOn(getProductFilterRepositoryStub, 'get').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error()))) 
+    jest.spyOn(getProductFilterRepositoryStub, 'getRmoura').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error()))) 
     const promise = sut.exec() 
     await expect(promise).rejects.toThrow()
   })
