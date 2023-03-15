@@ -13,11 +13,18 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository, Get
   constructor(private readonly prisma: PrismaClient) { }
 
   // ------------------ GetProductFilterRepository ------------------
-  async get(): Promise<any> {
+  async getRmoura(): Promise<any> {
     const units = await this.prisma.rmouraUnit.findMany()
     const packages = await this.prisma.rmouraPackage.findMany()
     const categories = await this.prisma.rmouraCategory.findMany()
     return { units, packages, categories }
+  }
+
+  async getCelmar(): Promise<any> { 
+    const mainCategory = await this.prisma.celmarMainCategory.findMany()
+    const subCategory = await this.prisma.celmarSubCategory.findMany()
+    const packages = await this.prisma.celmarPackage.findMany()
+    return { mainCategory, subCategory, packages }
   }
 
   // ------------------ AddRmouraProductsRepository ------------------
