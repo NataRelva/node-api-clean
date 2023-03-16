@@ -15,7 +15,15 @@ export interface Pagination {
   limit: number
 }
 
-export interface FilterRequest { 
+export interface CelmarFilter { 
+  mainCategoryId?: string,
+  subCategoryId?: string,
+  packageId?: string,
+  price?: PriceFilter
+}
+
+export interface FilterRequest {
+  celmarFilter?: CelmarFilter
   filter: Filter
   paginator: Pagination
   text: string

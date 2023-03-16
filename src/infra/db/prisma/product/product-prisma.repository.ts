@@ -1,3 +1,5 @@
+import { CelmarProductModel } from './../../../../domain/models/celmar-product';
+import { PullProductsCelmarRepository } from './../../../../data/protocols/db/product/pull-products-products-celmar-repository';
 import { AddCelmarProductsRepository } from './../../../../data/protocols/db/product/add-celmar-products.repository';
 import { RequestCelmarProduct } from './../../../../domain/useCases/register-products-celmar';
 import { PrismaClient } from '@prisma/client';
@@ -9,7 +11,7 @@ import { RmouraProductModel } from './../../../../domain/models/rmoura-product';
 import { RmouraProduct } from './../../../../domain/useCases/register-rmoura-product';
 import { AddRmouraProductsRepository } from './../../../../data/protocols/db/product/add-rmoura-products.repository';
 
-export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository, AddCelmarProductsRepository {
+export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository, AddCelmarProductsRepository, PullProductsCelmarRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
   // ------------------ GetProductFilterRepository ------------------
@@ -98,5 +100,33 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository, Get
         },
       });
     }
+  }
+
+  async pullCelmar(props: FilterRequest): Promise<CelmarProductModel[]> {
+    const { celmarFilter, paginator, text } = props;
+    const { page, limit } = paginator;
+    const { mainCategoryId, subCategoryId, packageId, price } = celmarFilter;
+    const { min = 0, max = Number.MAX_SAFE_INTEGER } = price;
+    const where = { 
+      name: { 
+        contains: text,
+      },
+      price: { 
+        gte: min,
+        lte: max,
+      },
+      ...(mainCategoryId && { mainCategory: { some: { id: mainCategoryId } } }),
+      ...(subCategoryId && { subCategory: { some: { id: subCategoryId } } }),
+      ...(packageId && { package: { some: { id: packageId } } }),
+    }
+    return await this.prisma.celmarProduct.findMany({ 
+      where , 
+      include: { 
+        mainCategory: true, 
+        subCategory: true, 
+        package: true 
+      }, 
+      take: limit, skip: page !== 0 ? (page - 1) * limit : 0 
+    })
   }
 }

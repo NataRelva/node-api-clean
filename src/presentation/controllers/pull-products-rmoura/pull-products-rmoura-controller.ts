@@ -1,4 +1,4 @@
-import { HttpRequest } from './../../protocols/http';
+import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { MissingParamError } from './../../errors/missing-param.error';
 import { PullProductsRmoura } from './../../../domain/useCases/pull-products-rmoura';
 import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';
@@ -9,7 +9,7 @@ export class PullProductsRmouraController implements Controller {
     private readonly pullProductsRmoura: PullProductsRmoura,
     private readonly handleError: ErrorHandlerAdapter,
   ) {}
-  async handle(request: HttpRequest): Promise<any> {
+  async handle(request: HttpRequest): Promise<HttpResponse> {
     const filter = request.body
     try {
       if (!filter) return badRequest(new MissingParamError('filter'))
