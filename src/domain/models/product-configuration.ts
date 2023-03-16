@@ -23,7 +23,7 @@ export interface FilterRequest {
 
 export interface FilterResponse { 
   rmoura?: FilterProvider,
-  celmar?: FilterProvider
+  celmar?: FilterProviderCelmar
 }
 
 export interface FilterProvider {
@@ -31,6 +31,13 @@ export interface FilterProvider {
   units: Property[]
   packages: Property[]
 }
+
+export interface FilterProviderCelmar {
+  mainCategories: Property[]
+  subCategories: Property[]
+  packages: Property[]
+}
+
 
 export interface Property {
   id: string
