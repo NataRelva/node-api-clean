@@ -27,10 +27,10 @@ const makeFilterResponse = (): FilterResponse => {
       ]
     },
     celmar: {
-      categories: [ 
+      subCategories: [ 
         { id: 'any_id', name: 'any_name' }
       ],
-      units: [ 
+      mainCategories: [ 
         { id: 'any_id', name: 'any_name' }
       ],
       packages: [ 
