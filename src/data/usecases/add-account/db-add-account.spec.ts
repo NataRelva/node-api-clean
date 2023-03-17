@@ -1,6 +1,6 @@
 import { CheckRegistration } from './../../../presentation/protocols/check-registration';
 import { DbAddAccount } from "./db-add-account"
-import { AccountModel, AddAccountModel, Hasher, AddAccountRepository } from "./db-add-account.protocols"
+import { AccountModel, AddAccountModel, Hasher, AddAccountRepository } from "./db-add-account-protocols"
 
 class EncrypterStub {
     async hash(value: string): Promise<string> {
