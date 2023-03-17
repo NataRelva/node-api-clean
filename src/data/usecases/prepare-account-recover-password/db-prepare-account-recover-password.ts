@@ -2,7 +2,7 @@ import { UpdatePasswordResetToken } from './../../protocols/db/account/update-pa
 import { RandomUuid } from './../../protocols/criptography/random';
 import { Encrypter } from './../../protocols/criptography/encrypter';
 import { LoadAccountByEmailRepository } from './../../protocols/db/account/load-account-by-email.repository';
-import { AccountModel } from '../add-account/db-add-account.protocols';
+import { AccountModel } from '../add-account/db-add-account-protocols';
 import { PrepareAccountRecoverPassword } from './../../protocols/db/account/prepare-account-recover-password';
 
 export class DbPrepareAccountRecoverPassword implements PrepareAccountRecoverPassword {
