@@ -1,7 +1,7 @@
 import { badRequest, serverError } from "./login-controllers-protocols"
 import { LoginController } from "./login-controllers"
 
-import { Authentication, AuthenticationModel } from "../../../domain/useCases/authentication"
+import { Authentication, AuthenticationModel } from "../../../domain/useCases/account/authentication"
 import { Validation } from "../../helpers/validators/validations"
 
 type SutTypesLogin = {

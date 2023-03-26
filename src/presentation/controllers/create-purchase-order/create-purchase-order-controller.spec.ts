@@ -1,4 +1,4 @@
-import { CreateOrder } from './../../../domain/useCases/create-order';
+import { CreateOrder } from './../../../domain/useCases/financial/create-order';
 import { CreatePurchaseOrderController } from './create-purchase-order-controller';
 
 interface SutTypes {
@@ -36,7 +36,7 @@ const makeCreateOrder = (): CreateOrder => {
 
 const makeSut = (): SutTypes => {
   const createOrder = makeCreateOrder()
-  const sut = new CreatePurchaseOrderController(createOrder)
+  const sut = new CreatePurchaseOrderController(createOrder, null)
   return { 
     sut,
     createOrder

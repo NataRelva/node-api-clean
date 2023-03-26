@@ -3,7 +3,7 @@ import { ErrorHandler } from "./../../protocols/error-handler";
 import {
   RequestCelmarProduct,
   RegisterProductsCelmar,
-} from "./../../../domain/useCases/register-products-celmar";
+} from "./../../../domain/useCases/product/register-products-celmar";
 import { RegisterProductsCelmarController } from "./register-products-celmar-controller";
 const makeSut = () => {
   class RegisterProductsCelmarStub implements RegisterProductsCelmar {

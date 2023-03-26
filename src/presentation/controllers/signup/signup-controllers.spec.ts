@@ -1,7 +1,8 @@
-import { Authentication, AuthenticationModel } from './../../../domain/useCases/authentication';
+import { AccountModel } from './../../../domain/models/account/account';
+import { AddAccount } from './../../../domain/useCases/account/add-account';
+import { Authentication, AuthenticationModel } from './../../../domain/useCases/account/authentication';
 import { ErrorHandler } from './../../protocols/error-handler';
 import { InvalidParamError, ServerError } from '../../errors/index'
-import { AccountModel, AddAccount } from './signup-controllers-protocols'
 import { SignupController } from './signup-controllers'
 import { Validation } from '../../helpers/validators/validations'
 import { badRequest } from '../login/login-controllers-protocols'

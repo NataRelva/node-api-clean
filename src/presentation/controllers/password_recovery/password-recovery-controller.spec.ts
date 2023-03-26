@@ -1,6 +1,6 @@
 // import { ValidationComposite } from './../../helpers/validators/validations.composite';
-// import { Authentication } from './../../../domain/useCases/authentication';
-// import { AccountModel } from './../../../domain/models/account';
+// import { Authentication } from './../../../domain/useCases/account/authentication';
+// import { AccountModel } from './../../../domain/models/account/account';
 // import { badRequest } from './../../helpers/http/http.helper';
 // import { ErrorHandler } from './../../protocols/error-handler';
 // import { SendEmailPasswordRecovery } from './../../../domain/useCases/send-mail-recovery-password';

@@ -1,6 +1,6 @@
 import { ErrorHandler } from './../../protocols/error-handler';
-import { FilterResponse } from './../../../domain/models/product-configuration';
-import { GetProductsFilter } from './../../../domain/useCases/get-products-filter';
+import { FilterResponse } from './../../../domain/models/product/product-configuration';
+import { GetProductsFilter } from './../../../domain/useCases/product/get-products-filter';
 import { BringAllFilteroOtionsRmouraController } from './bring-all-filter-options-rmoura-controller';
 
 

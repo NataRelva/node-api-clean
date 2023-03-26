@@ -1,10 +1,7 @@
 import { PullProductsCelmarController } from './pull-products-celmar-controller';
-import { CelmarProductModel } from './../../../domain/models/celmar-product';
-import { RequestCelmarProduct } from './../../../domain/useCases/register-products-celmar';
-import { PullProductsRmouraController } from './../pull-products-rmoura/pull-products-rmoura-controller';
-import { PullProductsCelmar } from './../../../domain/useCases/pull-products-celmar';
-import { RmouraProductModel } from './../../../domain/models/rmoura-product';
-import { FilterRequest } from './../../../domain/models/product-configuration';
+import { CelmarProductModel } from './../../../domain/models/product/celmar-product';
+import { PullProductsCelmar } from './../../../domain/useCases/product/pull-products-celmar';
+import { FilterRequest } from './../../../domain/models/product/product-configuration';
 import { HttpRequest } from './../../protocols/http';
 import { MissingParamError } from './../../errors/missing-param.error';
 import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';

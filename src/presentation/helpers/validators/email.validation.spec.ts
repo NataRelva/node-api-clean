@@ -1,5 +1,4 @@
-import { AccountModel, AddAccount, EmailValidator } from '../../controllers/signup/signup-controllers-protocols'
-import { badRequest } from '../../controllers/login/login-controllers-protocols'
+import { EmailValidator } from '../../controllers/signup/signup-controllers-protocols'
 import { EmailValidation } from './email.validation'
 
 type SutTypes = {
