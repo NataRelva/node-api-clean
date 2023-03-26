@@ -1,7 +1,7 @@
-import { SendEmailPasswordRecovery } from './../../domain/useCases/send-mail-recovery-password';
+import { SendEmailPasswordRecovery } from './../../services/useCases/send-mail-recovery-password';
 import { SendEmail, SendEmailData } from './../protocols/send-email';
 import env from '../../main/config/env';
-import { AccountModel } from './../../domain/models/account';
+import { AccountModel } from './../../domain/models/account/account';
 export class SendEmailPasswordRecoveryAdpter implements SendEmailPasswordRecovery {
     constructor(
         private readonly sendEmail: SendEmail

@@ -2,11 +2,11 @@ import { PrismaClient } from '@prisma/client';
 import { UpdatePasswordResetToken } from './../../../../data/protocols/db/account/update-password-reset-token';
 import { ChangeAccountPasswordRepository } from './../../../../data/protocols/db/account/change-account-passaword-repository';
 import { LoadAccountByTokenRepository } from './../../../../data/protocols/db/account/load-account-by-token.repository';
-import { AddAccountModel } from './../../../../domain/useCases/add-account';
+import { AddAccountModel } from './../../../../domain/useCases/account/add-account';
 import { UpdateAccessTokenRepository } from './../../../../data/protocols/db/account/update-access-token.repository';
 import { LoadAccountByEmailRepository } from './../../../../data/protocols/db/account/load-account-by-email.repository';
 import { AddAccountRepository } from './../../../../data/protocols/db/account/add-account-repository';
-import { AccountModel } from './../../../../domain/models/account';
+import { AccountModel } from './../../../../domain/models/account/account';
 
 const prisma = new PrismaClient();
 

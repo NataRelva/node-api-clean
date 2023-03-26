@@ -1,9 +1,10 @@
+import { SendEmailAdpter } from './../../../services/protocols/send-email.adapter';
 import { JwtAdapter } from './../../../infra/criptography/jwt-adpter/jwt-adapter';
 import { DbPrepareAccountRecoverPassword } from './../../../data/usecases/prepare-account-recover-password/db-prepare-account-recover-password';
 import { makeDbAuthentication } from './../useCases/authentication/db-authentication';
 import { SendGridEmailProvider } from './../../../infra/email/sendgrid';
 import { SendEmailPasswordRecoveryAdpter } from './../../../presentation/emails/send-email-password-recovery';
-import { SendEmailAdpter } from './../../../utils/send-email.adapter';
+
 import { AccountPrismaRepository } from './../../../infra/db/prisma/account-repository/account-prisma.repository';
 import { makeValidatorPasswordRecovery } from './password-recovery.validator.factory';
 import { PasswordRecoveryController } from './../../../presentation/controllers/password_recovery/password-recovery-controller';

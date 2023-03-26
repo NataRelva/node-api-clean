@@ -1,5 +1,5 @@
 import { MissingParamError } from './../../errors/missing-param.error';
-import { RegisterRmouraProduct } from './../../../domain/useCases/register-rmoura-product';
+import { RegisterRmouraProduct } from './../../../domain/useCases/product/register-rmoura-product';
 import { ErrorHandler } from './../../protocols/error-handler';
 import { ok, badRequest } from './../../helpers/http/http.helper';
 import { HttpRequest, HttpResponse } from './../../protocols/http';

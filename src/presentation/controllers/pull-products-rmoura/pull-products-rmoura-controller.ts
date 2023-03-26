@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { MissingParamError } from './../../errors/missing-param.error';
-import { PullProductsRmoura } from './../../../domain/useCases/pull-products-rmoura';
+import { PullProductsRmoura } from './../../../domain/useCases/product/pull-products-rmoura';
 import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';
 import { ok, badRequest } from './../../helpers/http/http.helper';
 import { Controller } from './../../protocols/controller';

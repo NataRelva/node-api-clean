@@ -1,5 +1,5 @@
-import { GetProductsFilter } from '../../../domain/useCases/get-products-filter';
-import { FilterResponse } from './../../../domain/models/product-configuration';
+import { GetProductsFilter } from '../../../domain/useCases/product/get-products-filter';
+import { FilterResponse } from './../../../domain/models/product/product-configuration';
 import { GetProductFilterRepository } from './../../protocols/db/product/get-products-filter.repository';
 export class DbGetProductFilterRmouraRepository implements GetProductsFilter {
   constructor(

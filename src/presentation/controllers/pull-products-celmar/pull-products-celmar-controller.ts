@@ -1,5 +1,5 @@
-import { FilterRequest } from './../../../domain/models/product-configuration';
-import { PullProductsCelmar } from './../../../domain/useCases/pull-products-celmar';
+import { FilterRequest } from './../../../domain/models/product/product-configuration';
+import { PullProductsCelmar } from './../../../domain/useCases/product/pull-products-celmar';
 import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { MissingParamError } from './../../errors/missing-param.error';
 import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';

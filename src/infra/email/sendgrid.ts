@@ -1,4 +1,4 @@
-import { EmailProvider } from './../../domain/models/email-provider';
+import { EmailProvider } from './../../presentation/protocols/email-provider';
 import { SendEmailData } from './../../presentation/protocols/send-email';
 import sgMail from "@sendgrid/mail";
 

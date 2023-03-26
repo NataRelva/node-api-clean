@@ -1,4 +1,4 @@
-import { ChangeAccountPassword } from './../../../domain/useCases/change-account-password';
+import { ChangeAccountPassword } from './../../../domain/useCases/account/change-account-password';
 import { ErrorHandler } from './../../protocols/error-handler';
 import { ok, badRequest } from './../../helpers/http/http.helper';
 import { HttpRequest, HttpResponse } from './../../protocols/http';

@@ -1,14 +1,14 @@
-import { CelmarProductModel } from './../../../../domain/models/celmar-product';
+import { CelmarProductModel } from './../../../../domain/models/product/celmar-product';
 import { PullProductsCelmarRepository } from './../../../../data/protocols/db/product/pull-products-products-celmar-repository';
 import { AddCelmarProductsRepository } from './../../../../data/protocols/db/product/add-celmar-products.repository';
-import { RequestCelmarProduct } from './../../../../domain/useCases/register-products-celmar';
+import { RequestCelmarProduct } from './../../../../domain/useCases/product/register-products-celmar';
 import { PrismaClient } from '@prisma/client';
 
-import { FilterRequest } from './../../../../domain/models/product-configuration';
+import { FilterRequest } from './../../../../domain/models/product/product-configuration';
 import { PullProductsRmouraRepository } from './../../../../data/protocols/db/product/pull-products-products-repository';
 import { GetProductFilterRepository } from './../../../../data/protocols/db/product/get-products-filter.repository';
-import { RmouraProductModel } from './../../../../domain/models/rmoura-product';
-import { RmouraProduct } from './../../../../domain/useCases/register-rmoura-product';
+import { RmouraProductModel } from './../../../../domain/models/product/rmoura-product';
+import { RmouraProduct } from './../../../../domain/useCases/product/register-rmoura-product';
 import { AddRmouraProductsRepository } from './../../../../data/protocols/db/product/add-rmoura-products.repository';
 
 export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository, AddCelmarProductsRepository, PullProductsCelmarRepository {

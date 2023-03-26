@@ -1,5 +1,5 @@
-import { EmailProvider } from './../domain/models/email-provider';
-import { SendEmail, SendEmailData } from './../presentation/protocols/send-email';
+import { SendEmail, SendEmailData } from './../../presentation/protocols/send-email';
+import { EmailProvider } from './../../presentation/protocols/email-provider';
 export class SendEmailAdpter implements SendEmail {
 
     constructor(

@@ -1,7 +1,7 @@
 import { LoadAccountByEmailRepository } from './../../protocols/db/account/load-account-by-email.repository';
 import { Hasher } from './../../protocols/criptography/hasher';
 import { ChangeAccountPasswordRepository } from './../../protocols/db/account/change-account-passaword-repository';
-import { ChangeAccountPassword } from './../../../domain/useCases/change-account-password';
+import { ChangeAccountPassword } from './../../../domain/useCases/account/change-account-password';
 export class DbChangeAccountPassword implements ChangeAccountPassword {
     constructor(
         private readonly changeAccountPasswordRepository: ChangeAccountPasswordRepository,

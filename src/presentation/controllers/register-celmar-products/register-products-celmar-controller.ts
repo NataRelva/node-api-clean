@@ -3,7 +3,7 @@ import { ok } from '../../helpers/http/http.helper';
 import { ErrorHandler } from '../../protocols/error-handler';
 import { HttpRequest, HttpResponse } from '../../protocols/http';
 import { Controller } from '../../protocols/controller';
-import { RegisterProductsCelmar } from '../../../domain/useCases/register-products-celmar';
+import { RegisterProductsCelmar } from '../../../domain/useCases/product/register-products-celmar';
 
 export class RegisterProductsCelmarController implements Controller {
   

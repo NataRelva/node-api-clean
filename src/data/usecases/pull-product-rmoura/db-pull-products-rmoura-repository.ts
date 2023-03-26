@@ -1,7 +1,7 @@
-import { RmouraProductModel } from './../../../domain/models/rmoura-product';
-import { FilterRequest } from './../../../domain/models/product-configuration';
+import { RmouraProductModel } from './../../../domain/models/product/rmoura-product';
+import { FilterRequest } from './../../../domain/models/product/product-configuration';
 import { PullProductsRmouraRepository } from './../../protocols/db/product/pull-products-products-repository';
-import { PullProductsRmoura } from './../../../domain/useCases/pull-products-rmoura';
+import { PullProductsRmoura } from './../../../domain/useCases/product/pull-products-rmoura';
 export class DbPullProductsRmouraRepository implements PullProductsRmoura {
   constructor(
     private readonly pullProductsRmouraRepository: PullProductsRmouraRepository,

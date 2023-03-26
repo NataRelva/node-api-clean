@@ -1,6 +1,7 @@
-import { Authentication } from './../../../domain/useCases/authentication';
+import { AddAccount } from './../../../domain/useCases/account/add-account';
+import { Authentication } from './../../../domain/useCases/account/authentication';
 import { ErrorHandler } from './../../protocols/error-handler';
-import { Controller, HttpRequest, HttpResponse, AddAccount } from './signup-controllers-protocols'
+import { Controller, HttpRequest, HttpResponse } from './signup-controllers-protocols'
 import { badRequest } from '../../helpers/http/http.helper'
 import { ok } from '../../helpers/http/http.helper'
 import { Validation } from '../../helpers/validators/validations'

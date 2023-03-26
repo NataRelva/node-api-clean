@@ -1,6 +1,7 @@
+import { SendEmailPasswordRecovery } from './../../../services/useCases/send-mail-recovery-password';
 import { PrepareAccountRecoverPassword } from './../../../data/protocols/db/account/prepare-account-recover-password';
 import { ErrorHandler } from './../../protocols/error-handler';
-import { SendEmailPasswordRecovery } from './../../../domain/useCases/send-mail-recovery-password';
+
 import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { ok, badRequest, unauthorized } from './../../helpers/http/http.helper';
 import { Controller } from './../../protocols/controller';

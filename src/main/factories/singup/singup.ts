@@ -1,8 +1,6 @@
 import { CheckRegistrationAdapter } from './../../../infra/registration/check-registration-adpter';
-import { CheckRegistration } from './../../../presentation/protocols/check-registration';
 import { JwtAdapter } from './../../../infra/criptography/jwt-adpter/jwt-adapter';
 import { DbAuthentication } from './../../../data/usecases/authentication/db-authentication';
-import { Authentication } from './../../../domain/useCases/authentication';
 import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';
 import { AccountPrismaRepository } from './../../../infra/db/prisma/account-repository/account-prisma.repository';
 import { LogPrismaRepository } from './../../../infra/db/prisma/log-repository/log-prisma-reposutory';

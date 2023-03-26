@@ -1,8 +1,8 @@
-import { GetProductsFilter } from '../../../domain/useCases/get-products-filter';
+import { GetProductsFilter } from '../../../domain/useCases/product/get-products-filter';
 import { ErrorHandler } from '../../protocols/error-handler';
 import { HttpRequest, HttpResponse } from '../../protocols/http';
 import { Controller } from '../../protocols/controller';
-import { FilterResponse } from '../../../domain/models/product-configuration';
+import { FilterResponse } from '../../../domain/models/product/product-configuration';
 import { ok } from "../../helpers/http/http.helper";
 export class BringAllFilteroOtionsRmouraController implements Controller {
   constructor(
