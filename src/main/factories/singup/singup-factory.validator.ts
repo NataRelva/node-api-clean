@@ -1,4 +1,3 @@
-import { CompareFieldsValidation } from "../../../presentation/helpers/validators/compare-fields.validations"
 import { EmailValidation } from "../../../presentation/helpers/validators/email.validation"
 import { Validation } from "../../../presentation/helpers/validators/validations"
 import { ValidationComposite } from "../../../presentation/helpers/validators/validations.composite"
