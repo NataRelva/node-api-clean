@@ -101,3 +101,51 @@ model CelmarSubCategory {
   name    String          @unique
   product CelmarProduct[] @relation("CelmarProductToCelmarSubCategory")
 }
+
+// ------FINANCEIRO------
+
+model Cart {
+  id        String     @id @unique @default(uuid())
+  item      CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @unique @default(uuid())
+  price     Float
+  quantity  Int
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Cart      Cart?    @relation(fields: [cartId], references: [id])
+  cartId    String?
+  productId String
+}
+
+model Product {
+  id        String     @id @unique @default(uuid())
+  productId CelmatId[] @relation("CelmatIdToProduct")
+  provider  Provider
+  CartItem  CartItem[]
+}
+
+enum Provider {
+  celmar
+  rmoura
+}
+
+// export interface CartItem { 
+//   id: string
+//   price: number
+//   quantity: number
+//   product: {
+//     productId: string
+//     provider: 'celmar' | 'rmoura',
+//   }
+// }
+
+// export interface Cart {
+//   id: string;
+//   itens: CartItem[];
+// }

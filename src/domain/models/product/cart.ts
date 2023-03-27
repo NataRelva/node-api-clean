@@ -1,11 +1,13 @@
+export interface Product {
+  productId: string
+  provider: 'celmar' | 'rmoura',
+}
+
 export interface CartItem { 
   id: string
   price: number
   quantity: number
-  product: {
-    productId: string
-    provider: 'celmar' | 'rmoura',
-  }
+  product: Product
 }
 
 export interface Cart {

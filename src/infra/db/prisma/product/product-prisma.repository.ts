@@ -17,8 +17,7 @@ export class ProductPrismaRepository implements
   GetProductFilterRepository,
   PullProductsRmouraRepository,
   AddCelmarProductsRepository,
-  PullProductsCelmarRepository, 
-  LoadProductsByIdsRepository {
+  PullProductsCelmarRepository {
 
   constructor(private readonly prisma: PrismaClient) { }
   // ------------------ GetProductFilterRepository ------------------
@@ -135,54 +134,5 @@ export class ProductPrismaRepository implements
       }, 
       take: limit, skip: page !== 0 ? (page - 1) * limit : 0 
     })
-  }
-
-  async loadByIds(ids: DTOLoadProductByIdentifier[]): Promise<DTOResponseLoadProductByIdentifier> {
-    
-    // SEPERAR EM UM UNICO ARRAY TODOS OS IDS COM PROVIDER CELMAR E RMOURA
-    const celmarIds = ids.filter(id => id.provider === 'celmar').map(id => id.id)
-    const rmouraIds = ids.filter(id => id.provider === 'rmoura').map(id => id.id)
-
-    const responseLoadProductByIdentifier:DTOResponseLoadProductByIdentifier = {
-      celmar: [],
-      rmoura: []
-    }
-
-    if (celmarIds.length > 0) { 
-       // BUSCAR TODOS OS PRODUTOS COM OS IDS CELMAR
-      const celmarProducts = await this.prisma.celmarProduct.findMany({
-        where: { 
-          id: { 
-            in: celmarIds
-          }
-        },
-        include: { 
-          mainCategory: true,
-          subCategory: true,
-          package: true
-        }
-      })
-      responseLoadProductByIdentifier.celmar.push(...celmarProducts)
-    }
-   
-    if (rmouraIds.length > 0) { 
-       // BUSCAR TODOS OS PRODUTOS COM OS IDS RMOURA
-      const rmouraProducts = await this.prisma.rmouraProduct.findMany({
-        where: { 
-          id: { 
-            in: rmouraIds
-          }
-        },
-        include: { 
-          unit: true,
-          category: true,
-          package: true,
-        }
-      }) as any  // Prisa corrigir isso: O modelo que vem do banco tá diferente do descriot no typescript
-
-      responseLoadProductByIdentifier.rmoura.push(...rmouraProducts)
-    }
-
-    return responseLoadProductByIdentifier;
   }
 }
