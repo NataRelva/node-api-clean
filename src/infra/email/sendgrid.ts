@@ -4,7 +4,7 @@ import sgMail from "@sendgrid/mail";
 
 export class SendGridEmailProvider implements EmailProvider {
     constructor(private readonly apiKey: string) {
-        sgMail.setApiKey(apiKey);
+        sgMail.setApiKey(this.apiKey);
     }
 
     async send(data: SendEmailData): Promise<void> {
