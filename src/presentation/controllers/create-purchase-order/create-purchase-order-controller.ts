@@ -13,7 +13,8 @@ export class CreatePurchaseOrderController {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const shoppingCart: ShoppingCart = httpRequest.body
+      const shoppingCart: ShoppingCart = httpRequest.body.products
+      const accountId = httpRequest.body.accountId
       
       if (!shoppingCart.products || Object.values(shoppingCart.products).length == 0) return badRequest(new Error('Missing param: products'))
       
@@ -21,7 +22,7 @@ export class CreatePurchaseOrderController {
       const stockAvailability = await this.productCheckIn.checkIn(shoppingCart)
 
       // CONSTRUA UMA PRE COMPRA COM OS PRODUTOS (AQUI FARAR A VERIFICAÇÃO DE PREÇOS E DESCONTOS)
-      const prePurchase = await this.createPrePurchase.create(stockAvailability)
+      const prePurchase = await this.createPrePurchase.create(stockAvailability, accountId)
 
       // CRIE O PEDIDO DA COMPRA NO FINANCEIRO
       const purchaseOrder = await this.createPurchase.create(prePurchase)
