@@ -1,3 +1,4 @@
+import { LoadProductsByIdsRepository, DTOLoadProductByIdentifier, DTOResponseLoadProductByIdentifier } from './../../../../data/protocols/db/logistics/load-products-by-ids-repository';
 import { CelmarProductModel } from './../../../../domain/models/product/celmar-product';
 import { PullProductsCelmarRepository } from './../../../../data/protocols/db/product/pull-products-products-celmar-repository';
 import { AddCelmarProductsRepository } from './../../../../data/protocols/db/product/add-celmar-products.repository';
@@ -11,9 +12,15 @@ import { RmouraProductModel } from './../../../../domain/models/product/rmoura-p
 import { RmouraProduct } from './../../../../domain/useCases/product/register-rmoura-product';
 import { AddRmouraProductsRepository } from './../../../../data/protocols/db/product/add-rmoura-products.repository';
 
-export class ProductPrismaRepository implements AddRmouraProductsRepository, GetProductFilterRepository, PullProductsRmouraRepository, AddCelmarProductsRepository, PullProductsCelmarRepository {
-  constructor(private readonly prisma: PrismaClient) { }
+export class ProductPrismaRepository implements 
+  AddRmouraProductsRepository, 
+  GetProductFilterRepository,
+  PullProductsRmouraRepository,
+  AddCelmarProductsRepository,
+  PullProductsCelmarRepository, 
+  LoadProductsByIdsRepository {
 
+  constructor(private readonly prisma: PrismaClient) { }
   // ------------------ GetProductFilterRepository ------------------
   async getRmoura(): Promise<any> {
     const units = await this.prisma.rmouraUnit.findMany()
@@ -128,5 +135,54 @@ export class ProductPrismaRepository implements AddRmouraProductsRepository, Get
       }, 
       take: limit, skip: page !== 0 ? (page - 1) * limit : 0 
     })
+  }
+
+  async loadByIds(ids: DTOLoadProductByIdentifier[]): Promise<DTOResponseLoadProductByIdentifier> {
+    
+    // SEPERAR EM UM UNICO ARRAY TODOS OS IDS COM PROVIDER CELMAR E RMOURA
+    const celmarIds = ids.filter(id => id.provider === 'celmar').map(id => id.id)
+    const rmouraIds = ids.filter(id => id.provider === 'rmoura').map(id => id.id)
+
+    const responseLoadProductByIdentifier:DTOResponseLoadProductByIdentifier = {
+      celmar: [],
+      rmoura: []
+    }
+
+    if (celmarIds.length > 0) { 
+       // BUSCAR TODOS OS PRODUTOS COM OS IDS CELMAR
+      const celmarProducts = await this.prisma.celmarProduct.findMany({
+        where: { 
+          id: { 
+            in: celmarIds
+          }
+        },
+        include: { 
+          mainCategory: true,
+          subCategory: true,
+          package: true
+        }
+      })
+      responseLoadProductByIdentifier.celmar.push(...celmarProducts)
+    }
+   
+    if (rmouraIds.length > 0) { 
+       // BUSCAR TODOS OS PRODUTOS COM OS IDS RMOURA
+      const rmouraProducts = await this.prisma.rmouraProduct.findMany({
+        where: { 
+          id: { 
+            in: rmouraIds
+          }
+        },
+        include: { 
+          unit: true,
+          category: true,
+          package: true,
+        }
+      }) as any  // Prisa corrigir isso: O modelo que vem do banco tá diferente do descriot no typescript
+
+      responseLoadProductByIdentifier.rmoura.push(...rmouraProducts)
+    }
+
+    return responseLoadProductByIdentifier;
   }
 }
