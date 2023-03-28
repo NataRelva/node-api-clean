@@ -1,9 +1,7 @@
 import { LoadProductsByIdsRepository } from './../../../protocols/db/logistics/load-products-by-ids-repository';
-import { RmouraProductModel } from './../../../../domain/models/product/rmoura-product';
-import { ProductCheckInData } from './../../../../domain/models/logistics/product-check-in-data';
+import { ProductCheckInData, ProductCheckInStatus } from './../../../../domain/models/logistics/product-check-in-data';
 import { ShoppingCart } from './../../../../presentation/protocols/shopping-cart';
 import { ProductCheckIn } from './../../../../domain/useCases/logistics/productCheckIn/product-checkIn-usecase';
-import { CelmarProductModel } from '../../../../domain/models/product';
 
 export class DbProductCheckInRepository implements ProductCheckIn {
 
@@ -11,51 +9,31 @@ export class DbProductCheckInRepository implements ProductCheckIn {
 
   async checkIn(data: ShoppingCart): Promise<ProductCheckInData[]> {
     const { products } = data;
-    if (!products || Object.values(products).length == 0) {
-      throw new Error('Missing param: products');
-    }
-
     const chosenProductIdentifiers = products.map(product => ({
       id: product.productId,
       quantity: product.quantity,
-      provider: product.provider
+      discount: product.discount,
     }));
-
-    const databaseSourceProducts = await this.loadProductsByIdsRepository.loadByIds(chosenProductIdentifiers);
-    if (!databaseSourceProducts.celmar && !databaseSourceProducts.rmoura) {
-      throw new Error('Products not found');
-    }
-
+    const databaseSourceProducts = await this.loadProductsByIdsRepository.loadProductsByIds(chosenProductIdentifiers);
     const productCheckInData: ProductCheckInData[] = [];
-    const addProductCheckIn = (provider: 'celmar' | 'rmoura', products: Array<CelmarProductModel | RmouraProductModel>) => {
-      products.forEach(product => {
-        const productIdentifier = chosenProductIdentifiers.find(identifier => identifier.id === product.id);
-        const productCheckIn: ProductCheckInData = {
-          productId: product.id,
-          quantity: productIdentifier.quantity,
-          provider: provider,
-          status: {
-            availabilityCheck: true,
-            conditionCheck: true,
-            expirationDateCheck: true,
-            serialNumberCheck: true,
-            priceCheck: true,
-            documentationCheck: true,
-            storageCheck: true,
-            identificationCheck: true,
-          }
-        }
-        productCheckInData.push(productCheckIn);
-      });
-    };
-
-    if (databaseSourceProducts.celmar?.length) {
-      addProductCheckIn('celmar', databaseSourceProducts.celmar);
+    for( const { product, quantity } of databaseSourceProducts ) {
+      const status: ProductCheckInStatus = {
+        availabilityCheck: true,
+        conditionCheck: true,
+        expirationDateCheck: true,
+        serialNumberCheck: true,
+        priceCheck: true,
+        documentationCheck: true,
+        storageCheck: true,
+        identificationCheck: true,
+      }
+      const productCheckInDataItem: ProductCheckInData = { 
+        product,
+        quantity,
+        status
+      };
+      productCheckInData.push(productCheckInDataItem);
     }
-    if (databaseSourceProducts.rmoura?.length) {
-      addProductCheckIn('rmoura', databaseSourceProducts.rmoura);
-    }
-
     return productCheckInData;
   }
 }

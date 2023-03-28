@@ -1,3 +1,5 @@
+import { ProductModel } from './../product/product';
+
 // availabilityCheck: Quantidade de produtos: Verificar se a quantidade de produtos recebidos corresponde à quantidade solicitada.
 
 // conditionCheck: Condição dos produtos: Verificar se os produtos foram danificados durante o transporte ou se estão em boas condições.
@@ -26,9 +28,7 @@ export interface ProductCheckInStatus {
 }
 
 export interface ProductCheckInData {
-  productId: string
-  quantity: number
-  provider: 'celmar' | 'rmoura',
-  discount?: number
+  product: ProductModel
+  quantity: number,
   status: ProductCheckInStatus
 }

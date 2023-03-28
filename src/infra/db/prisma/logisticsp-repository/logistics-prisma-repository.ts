@@ -8,7 +8,7 @@ export class LogisticsPrismaRepository implements LoadProductsByIdsRepository {
 
   async loadProductsByIds(ids: DTOLoadProductByIdentifier[]): Promise<RequestedProductDetails[]> {
     const requestedProductDetails: RequestedProductDetails[] = [];
-    for( const { id , quantity } of ids ) { 
+    for( const { id , quantity, discount } of ids ) { 
       const product = await this.prisma.product.findUnique({ 
         where: { id },
         include: {
@@ -19,7 +19,7 @@ export class LogisticsPrismaRepository implements LoadProductsByIdsRepository {
           unit: true,
         }
       }) as any as ProductModel
-      requestedProductDetails.push({ product, quantity });
+      requestedProductDetails.push({ product, quantity, discount });
     }
     return requestedProductDetails;
   }
