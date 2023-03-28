@@ -64,8 +64,42 @@ describe('LogisticsPrismaRepository', () => {
   describe('loadProductsByIds', () => {
     test('Should return an array of products', async () => {
       const { sut } = makeSut();
-      const products = await sut.loadProductsByIds([{ id: 'any_id', quantity: 1 }]);
-      expect(products).toEqual(fakeReponseProducts);
+      const products = await sut.loadProductsByIds([{ id: 'any_id', quantity: 1, discount: 0 }]);
+      expect(products).toEqual([{
+        product: {
+          id: 'any_id',
+          name: 'any_name',
+          description: 'any_description',
+          price: 1,
+          category: {
+            id: 'any_id',
+            name: 'any_name',
+            description: 'any_description',
+            mainCategory: {
+              id: 'any_id',
+              name: 'any_name',
+              description: 'any_description',
+            },
+            subCategory: {
+              id: 'any_id',
+              name: 'any_name',
+              description: 'any_description',
+            }
+          },
+          package: {
+            id: 'any_id',
+            name: 'any_name',
+            description: 'any_description',
+            unit: {
+              id: 'any_id',
+              name: 'any_name',
+              description: 'any_description',
+            }
+          }
+        },
+        quantity: 1,
+        discount: 0
+      }]);
     });
     test('Should return an empty array', async () => { 
       const { sut } = makeSut();
@@ -77,7 +111,7 @@ describe('LogisticsPrismaRepository', () => {
       jest.spyOn(prisma.product, 'findUnique').mockImplementationOnce(() => { 
         throw new Error();
       })
-      const promise = sut.loadProductsByIds([{ id: 'any_id', quantity: 1 }]);
+      const promise = sut.loadProductsByIds([{ id: 'any_id', quantity: 1, discount: 0}]);
       await expect(promise).rejects.toThrow();
     })
   })
