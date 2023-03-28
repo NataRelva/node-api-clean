@@ -1,13 +1,10 @@
-import { Package } from './../../../../domain/models/product/product';
-import { MainCategory, PrismaClient, SubCategory } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { FilterRequest, ProductModel } from './../../../../domain/models/product';
 import { Product } from './../../../../domain/useCases/product';
 import { GetProductFilterRepository } from './../../../../data/protocols/db/product/get-products-filter.repository';
 import { AddProductsRepository } from './../../../../data/protocols/db/product';
 
-export class ProductPrismaRepository implements
-  AddProductsRepository,
-  GetProductFilterRepository {
+export class ProductPrismaRepository implements AddProductsRepository, GetProductFilterRepository {
 
   constructor(private readonly prisma: PrismaClient) { }
 
