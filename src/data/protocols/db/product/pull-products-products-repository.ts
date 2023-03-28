@@ -1,6 +1,6 @@
 import { FilterRequest } from './../../../../domain/models/product/product-configuration';
-import { RmouraProductModel } from './../../../../domain/models/product/rmoura-product';
+import { ProductModel } from './../../../../domain/models/product';
 
 export interface PullProductsRmouraRepository {
-  pullRmoura(props: FilterRequest): Promise<RmouraProductModel[]>
+  pullRmoura(props: FilterRequest): Promise<ProductModel[]>
 }

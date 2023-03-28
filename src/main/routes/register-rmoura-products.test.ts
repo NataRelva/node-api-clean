@@ -101,17 +101,17 @@ const makeRequest = (): { products: any[] } => {
 const request = supertest(app)
 
 describe('Register Rmoura Products Router', () => { 
-  test('Should return 200 on register-rmoura-products', async () => { 
+  test('Should return 200 on register-products', async () => { 
     const response = await request
-      .post('/api/register-rmoura-products')
+      .post('/api/register-products')
       .send(makeRequest())
     expect(response.status).toBe(200)
     expect(response.body).toEqual('registrados com sucesso')
   })
 
-  test('Should return 400 on register-rmoura-products', async () => { 
+  test('Should return 400 on register-products', async () => { 
     const response = await request
-      .post('/api/register-rmoura-products')
+      .post('/api/register-products')
       .send({})
     expect(response.status).toBe(400)
     expect(response.body).toEqual({"error": "Missing param: products"})

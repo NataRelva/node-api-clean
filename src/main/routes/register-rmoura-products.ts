@@ -2,5 +2,5 @@ import { makeCreateRmouraProduct } from './../factories/create-rmoura-product/cr
 import { adaptRoute } from './../adapters/express-route-adpter';
 import { Router } from 'express';
 export default function (router: Router): void {
-  router.post('/register-rmoura-products',adaptRoute(makeCreateRmouraProduct()))
+  router.post('/register-products',adaptRoute(makeCreateRmouraProduct()))
 }

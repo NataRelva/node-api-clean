@@ -4,10 +4,12 @@ export interface PriceFilter {
 }
 
 export interface Filter {
-  categoryId: string,
+  price: PriceFilter
   unitId: string,
   packageId: string,
-  price: PriceFilter
+  mainCategoryId: string,
+  subCategoryId: string,
+  categoryId: string,
 }
 
 export interface Pagination { 
@@ -15,15 +17,7 @@ export interface Pagination {
   limit: number
 }
 
-export interface CelmarFilter { 
-  mainCategoryId?: string,
-  subCategoryId?: string,
-  packageId?: string,
-  price?: PriceFilter
-}
-
 export interface FilterRequest {
-  celmarFilter?: CelmarFilter
   filter: Filter
   paginator: Pagination
   text: string
@@ -45,7 +39,6 @@ export interface FilterProviderCelmar {
   subCategories: Property[]
   packages: Property[]
 }
-
 
 export interface Property {
   id: string

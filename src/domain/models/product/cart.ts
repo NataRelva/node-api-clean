@@ -1,5 +1,6 @@
-export interface Product {
-  productId: string
+export interface Item {
+  id: string
+  productId: string,
   provider: 'celmar' | 'rmoura',
 }
 
@@ -7,7 +8,7 @@ export interface CartItem {
   id: string
   price: number
   quantity: number
-  product: Product
+  item: Item
 }
 
 export interface Cart {

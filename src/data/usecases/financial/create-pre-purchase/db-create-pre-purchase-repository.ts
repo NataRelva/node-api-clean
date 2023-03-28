@@ -15,8 +15,8 @@ export class DbCreatePrePurchase implements CreatePrePurchase {
   async create(data: ProductCheckInData[], accountId: string): Promise<Order> {
     if (!data || Object.values(data).length == 0) throw new Error('Missing param: data');
     const account: AccountModel = await this.loadAccount.load(accountId);
-    const cart: Cart = await this.createCart.create(data);
-    const order: Order = await this.createPrePurchaseRepository.create(cart, account);
+    const cart: Cart = await this.createCart.createCart(data);
+    const order: Order = await this.createPrePurchaseRepository.createPrePurchase(cart, account);
     return order;
   }
 }

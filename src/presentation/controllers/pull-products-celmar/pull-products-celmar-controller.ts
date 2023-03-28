@@ -11,10 +11,10 @@ export class PullProductsCelmarController implements Controller {
     private readonly handleError: ErrorHandlerAdapter,
   ) {}
   async handle(request: HttpRequest): Promise<HttpResponse> {
-    const filter: FilterRequest = request.body
+    const filterRequest: FilterRequest = request.body
     try {
-      if (!filter) return badRequest(new MissingParamError('filter'))
-      const products = await this.pullProductsCelmar.pull(filter)
+      if (!filterRequest || !filterRequest.filter) return badRequest(new MissingParamError('filter'))
+      const products = await this.pullProductsCelmar.pull(filterRequest)
       return ok(products)
     } catch (error) {
       return this.handleError.handle(error)

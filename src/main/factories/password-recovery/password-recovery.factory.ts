@@ -1,4 +1,5 @@
-import { SendEmailAdpter } from './../../../services/protocols/send-email.adapter';
+import { SendEmailAdpter } from './../../../services/useCases/send-email.adapter';
+
 import { JwtAdapter } from './../../../infra/criptography/jwt-adpter/jwt-adapter';
 import { DbPrepareAccountRecoverPassword } from './../../../data/usecases/prepare-account-recover-password/db-prepare-account-recover-password';
 import { SendGridEmailProvider } from './../../../infra/email/sendgrid';

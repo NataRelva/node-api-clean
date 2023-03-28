@@ -1,10 +1,10 @@
-import { AddRmouraProductsRepository } from './../../protocols/db/product/add-rmoura-products.repository';
-import { RegisterRmouraProduct, RmouraProduct } from './../../../domain/useCases/product';
-export class DbRegisterRmouraProducts implements RegisterRmouraProduct {
+import { AddProductsRepository } from './../../protocols/db/product/add-products.repository';
+import { RegisterProduct, Product } from './../../../domain/useCases/product';
+export class DbRegisterProducts implements RegisterProduct {
   constructor(
-    private readonly addRmouraProductsRepository: AddRmouraProductsRepository,
+    private readonly addProductsRepository: AddProductsRepository,
   ) {}
-  async register(rmouraProduct: RmouraProduct[]): Promise<void> {
-    await this.addRmouraProductsRepository.addRmoura(rmouraProduct)
+  async registerProducts(rmouraProduct: Product[]): Promise<void> {
+    await this.addProductsRepository.addProducts(rmouraProduct)
   }
 }
