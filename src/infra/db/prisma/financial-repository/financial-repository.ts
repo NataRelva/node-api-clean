@@ -21,7 +21,36 @@ export class FinancialRepository implements CalculateOrderTotalRepository, Creat
   }
 
   async createCart(data: Order[], total: number, accountId: string): Promise<CartModel>{
-    return '' as any
+    const account = await this.prisma.account.findUnique({where: {id: accountId}})
+    const cart = await this.prisma.cart.create({
+      data: {
+        total,
+        account: {
+          connect: {
+            id: account.id
+          }
+        }
+      }
+    })
+    for(const { productId, quantity } of data) {
+      const product = await this.prisma.product.findUnique({where: {id: productId}})
+      await this.prisma.cartItem.create({
+        data: {
+          quantity,
+          product: {
+            connect: {
+              id: product.id
+            }
+          },
+          cart: {
+            connect: {
+              id: cart.id
+            }
+          }
+        }
+      })
+    }
+    return cart as any as CartModel
   }
 
 }

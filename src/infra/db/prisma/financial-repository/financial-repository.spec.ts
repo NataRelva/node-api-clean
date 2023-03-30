@@ -1,7 +1,5 @@
 import { FinancialRepository } from './financial-repository';
-import { Order } from './../../../../domain/models/logistics/order';
 import { CartModel } from './../../../../domain/models/product/cart';
-import { CreateCart } from './../../../../domain/useCases/logistics/create-cart/create-cart';
 import { PrismaClient } from '@prisma/client';
 
 
@@ -64,7 +62,8 @@ const makeSut = (): SutTypes => {
 }
 
 describe('FinancialRepository', () => { 
-  describe('calculateOrderTotal', () => { 
+  describe('calculateOrderTotal', () => {
+    
     test('Should return the correct total', async () => {
       const { sut } = makeSut()
       const order = [
@@ -107,4 +106,5 @@ describe('FinancialRepository', () => {
       expect(total).toBe(3)
     })
   })
+
 })
