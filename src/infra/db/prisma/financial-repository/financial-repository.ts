@@ -1,3 +1,5 @@
+import { PurchaseModel } from './../../../../domain/models/financial/purchase-entity';
+import { CreatePurchaseRepository } from './../../../../data/protocols/db/financial/create-purchase-repository/create-purchase-repository';
 import { CartModel } from './../../../../domain/models/product/cart';
 import { ProductModel } from './../../../../domain/models/product/product';
 import { Order } from './../../../../domain/models/logistics/order';
@@ -6,7 +8,7 @@ import { CreateCartRepository } from './../../../../data/protocols/db/financial/
 import { AccountModel } from './../../../../domain/models/account/account';
 import { PrismaClient } from '@prisma/client';
 
-export class FinancialRepository implements CalculateOrderTotalRepository, CreateCartRepository {
+export class FinancialRepository implements CalculateOrderTotalRepository, CreateCartRepository, CreatePurchaseRepository{
   constructor(
     private readonly prisma: PrismaClient
   ) {}
@@ -53,4 +55,27 @@ export class FinancialRepository implements CalculateOrderTotalRepository, Creat
     return cart as any as CartModel
   }
 
+  async createPurchase(cartId: string): Promise<PurchaseModel> { 
+    const cart = await this.prisma.cart.findUnique({where: {id: cartId}})
+    const purchase = await this.prisma.purchase.create({ 
+      data: {
+        cart: {
+          connect: { 
+            id: cart.id
+          }
+        },
+        account: { 
+          connect: { 
+            id: cart.accountId
+          }
+        },
+        shippingAddress: '',
+        shippingPrice: 0,
+        paymentMethod: '',
+        total: cart.total,
+        status: 'pending',
+      }
+    })  as any as PurchaseModel
+    return purchase
+  }
 }

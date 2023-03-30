@@ -1,8 +1,8 @@
 import { AccountModel } from './../account/account';
-import { Cart } from './../product/cart';
+import { CartModel } from './../product/cart';
 export interface PurchaseModel { 
   id: string;
-  cart: Cart;
+  cart: CartModel;
   account: AccountModel,
   paymentMethod: string;
   shippingAddress: string;

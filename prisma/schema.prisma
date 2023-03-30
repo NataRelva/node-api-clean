@@ -8,19 +8,20 @@ datasource db {
 }
 
 model Account {
-  id                   String    @id @unique @default(uuid())
+  id                   String     @id @unique @default(uuid())
   name                 String
-  email                String    @unique
+  email                String     @unique
   password             String
-  cpfCnpj              String    @unique
+  cpfCnpj              String     @unique
   phone                String
-  accessToken          String    @unique @default("")
-  role                 String    @default("user")
-  passwordResetToken   String?   @unique
+  accessToken          String     @unique @default("")
+  role                 String     @default("user")
+  passwordResetToken   String?    @unique
   passwordResetExpires DateTime?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
   Cart                 Cart[]
+  Purchase             Purchase[]
 }
 
 model Log {
@@ -92,25 +93,65 @@ model SubCategory {
 }
 
 model Cart {
-  id        String     @id @unique @default(uuid())
+  id    String @id @unique @default(uuid())
+  total Float  @default(0)
+
+  account   Account? @relation(fields: [accountId], references: [id])
   accountId String?
-  total     Float      @default(0)
+
+  cartItem CartItem[]
+
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  account   Account?   @relation(fields: [accountId], references: [id])
-  cartItem  CartItem[]
+  Purchase  Purchase[]
 }
 
 model CartItem {
-  id        String   @id @unique @default(uuid())
+  id       String @id @unique @default(uuid())
+  quantity Int
+
+  product   Product? @relation(fields: [productId], references: [id])
   productId String?
-  quantity  Int
-  cartId    String?
+
+  cart   Cart?   @relation(fields: [cartId], references: [id])
+  cartId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  cart      Cart?    @relation(fields: [cartId], references: [id])
-  product   Product? @relation(fields: [productId], references: [id])
 }
+
+model Purchase {
+  id              String   @id @unique @default(uuid())
+  paymentMethod   String
+  shippingAddress String
+  shippingPrice   Float
+  total           Float
+  status          String   @default("pending")
+  createDate      DateTime @default(now())
+  updateDate      DateTime @updatedAt
+
+  cart   Cart?   @relation(fields: [cartId], references: [id])
+  cartId String?
+
+  account   Account? @relation(fields: [accountId], references: [id])
+  accountId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// export interface PurchaseModel { 
+//   id: string;
+//   cart: CartModel;
+//   account: AccountModel,
+//   paymentMethod: string;
+//   shippingAddress: string;
+//   shippingPrice: number;
+//   total: number;
+//   status: 'pending' | 'approved' | 'canceled' | 'refunded' | 'shipped' | 'delivered' | 'returned' | 'disputed';
+//   createDate: Date;
+//   updateDate: Date;
+// }
 
 model ProductToSubCategory {
   A              String
