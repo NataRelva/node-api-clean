@@ -1,17 +1,9 @@
-export interface Item {
-  id: string
-  productId: string,
-  provider: 'celmar' | 'rmoura',
-}
+import { AccountModel } from './../account/account';
+import { ProductModel } from './product';
 
-export interface CartItem { 
-  id: string
-  price: number
-  quantity: number
-  item: Item
-}
-
-export interface Cart {
-  id: string;
-  itens: CartItem[];
+export interface CartModel {
+  id: string,
+  account: AccountModel
+  products: ProductModel[],
+  total: number
 }

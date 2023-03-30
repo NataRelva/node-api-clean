@@ -10,10 +10,8 @@ export class FinancialRepository implements CreatePrePurchaseRepository, CreateC
     private readonly prisma: PrismaClient
   ) {}
 
-  async createCart(data: ProductCheckInData[]): Promise<Cart> { 
-    return new Promise<any>((resolve, reject) => { 
-      resolve('')
-    })
+  async createCart(checkInData: ProductCheckInData[]): Promise<Cart> {
+    return '' as any
   }
 
   async createPrePurchase(cart: Cart, account: AccountModel): Promise<Order> {

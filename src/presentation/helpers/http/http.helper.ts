@@ -26,3 +26,9 @@ export const ok = (data: any): HttpResponse => ({
     statusCode: 200,
     body: data
 })
+
+export function verifyProps<T>(httpRequest: any, key: string): T {
+    if (!httpRequest.body) return null
+    if (!httpRequest.body[key]) return null
+    return httpRequest.body[key]
+}

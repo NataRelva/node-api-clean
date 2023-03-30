@@ -1,4 +1,5 @@
-import { ShoppingCart } from './../../../../domain/models/shopping-cart';
+import { ShoppingCart } from './../../../../presentation/protocols/shopping-cart';
+
 export interface CreatePurchaseOrderRepository { 
-  create: (data: ShoppingCart) => Promise<void>
+  create(data: ShoppingCart): Promise<void>
 }
