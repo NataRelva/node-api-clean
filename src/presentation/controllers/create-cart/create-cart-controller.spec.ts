@@ -1,11 +1,11 @@
+import { CreateCart } from './../../../domain/useCases/logistics/create-cart/create-cart';
 import { ProductModel } from './../../../domain/models/product/product';
 import { AccountModel } from './../../../domain/models/account/account';
 import { CartModel } from './../../../domain/models/product/cart';
-import { CreateCart } from './../../../domain/useCases/product/create-cart';
 import { Order } from './../../../domain/models/logistics/order';
 import { CheckProductAvailability } from './../../../domain/useCases/product/check-product-availability';
 import { CreatCartController } from './create-cart-controller';
-import { badRequest } from './../../helpers/http/http.helper';
+import { badRequest, serverError } from './../../helpers/http/http.helper';
 
 const makeCheckProductAvailability = () => { 
   class CheckProductAvailabilityStub implements CheckProductAvailability { 
@@ -40,11 +40,16 @@ const makeCreateCart = () => {
       mainCategory: [],
       subCategory: [],
     }]
+    fakeCartItem = [{ 
+      id: 'any_id',
+      product: this.fakeProducts[0],
+      quantity: 1
+    }]
     async execute(order: Order[]): Promise<CartModel> { 
       const fakeCartModel: CartModel = {
         id: 'any_id',
         account: this.fakeAccount,
-        products: this.fakeProducts,
+        cartItem: this.fakeCartItem,        
         total: 1
       }
       return fakeCartModel
@@ -60,7 +65,8 @@ const fakeHttpRequestOrder = {
         productId: 'any_id',
         quantity: 1
       }
-    ]
+    ],
+    accountId: 'any_id'
   }
 }
 
@@ -68,7 +74,7 @@ const makeSut = () => {
   const checkProductAvailability = makeCheckProductAvailability()
   const createCart = makeCreateCart()
   const sut = new CreatCartController(checkProductAvailability, createCart)
-  return { sut }
+  return { sut, createCart, checkProductAvailability}
 }
 
 describe('CreateCartController', () => {
@@ -94,5 +100,39 @@ describe('CreateCartController', () => {
     const createCartSpy = jest.spyOn(sut, 'handle')
     await sut.handle(fakeHttpRequestOrder)
     expect(createCartSpy).toHaveBeenCalledWith(fakeHttpRequestOrder)
+  })
+  test('Should return 500 if CheckProductAvailability throws', async () => { 
+    const { sut, checkProductAvailability } = makeSut()
+    jest.spyOn(checkProductAvailability, 'execute').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(fakeHttpRequestOrder)
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('Should return 500 if CreateCart throws', async () => { 
+    const { sut, createCart } = makeSut()
+    jest.spyOn(createCart, 'execute').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(fakeHttpRequestOrder)
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('Should call CreateCart with correc value', async () => { 
+    const {sut, createCart} = makeSut()
+    const spyOnCreateCart = jest.spyOn(createCart, 'execute')
+    await sut.handle(fakeHttpRequestOrder)
+    expect(spyOnCreateCart).toHaveBeenCalledWith(fakeHttpRequestOrder.body.order, fakeHttpRequestOrder.body.accountId)
+  })
+  test('Should return CartModel if CreateCart success', async () => { 
+    const { sut, createCart } = makeSut()
+    const responseSpy = jest.spyOn(createCart, 'execute')
+    await sut.handle(fakeHttpRequestOrder)
+    expect(responseSpy).toHaveBeenCalledWith(fakeHttpRequestOrder.body.order, fakeHttpRequestOrder.body.accountId)
+  })
+  test('Should return 200 on success', async () => { 
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(fakeHttpRequestOrder)
+    expect(httpResponse.statusCode).toBe(200)
+  })
+  test('Should return 400 if accountId not provider', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({ body: { order: [] } })
+    expect(httpResponse).toEqual(badRequest(new Error('Conta não informada')))
   })
 })
