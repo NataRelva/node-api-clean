@@ -9,6 +9,14 @@ export class DbCreateCartRepository implements CreateCart {
     private readonly calculateOrderTotal: CalculateOrderTotalRepository,
   ) {}
   async execute(order: Order[], accountId: string): Promise<CartModel> {
+    if (!order || order.length === 0) {
+      throw new Error('No order was provided')
+    } else if (!Array.isArray(order)) {
+      throw new Error('The order must be an array')
+    } 
+    if (!accountId) { 
+      throw new Error('No account was provided')
+    }
     const total = await this.calculateOrderTotal.calculateOrderTotal(order)
     return await this.createCartRepository.createCart(order, total, accountId)
   }

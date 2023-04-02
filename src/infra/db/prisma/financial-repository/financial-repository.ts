@@ -1,17 +1,25 @@
 import { PurchaseModel } from './../../../../domain/models/financial/purchase-entity';
 import { CreatePurchaseRepository } from './../../../../data/protocols/db/financial/create-purchase-repository/create-purchase-repository';
 import { CartModel } from './../../../../domain/models/product/cart';
-import { ProductModel } from './../../../../domain/models/product/product';
 import { Order } from './../../../../domain/models/logistics/order';
 import { CalculateOrderTotalRepository } from './../../../../data/protocols/db/financial/calculate-order-total/calculate-order-total-repository';
 import { CreateCartRepository } from './../../../../data/protocols/db/financial/create-cart-repository/create-cart-repository';
-import { AccountModel } from './../../../../domain/models/account/account';
 import { PrismaClient } from '@prisma/client';
+import { CheckProductAvailabilityRepository } from '../../../../data/protocols/db/product/check-product-availability-repository';
 
-export class FinancialRepository implements CalculateOrderTotalRepository, CreateCartRepository, CreatePurchaseRepository{
+export class FinancialRepository implements CalculateOrderTotalRepository, CreateCartRepository, CreatePurchaseRepository, CheckProductAvailabilityRepository {
   constructor(
     private readonly prisma: PrismaClient
   ) {}
+
+  async checkAvailability(data: Order[]): Promise<boolean> {
+    for(const { productId, quantity } of data) {
+      if (productId === undefined || quantity === undefined) throw new Error('No product or quantity was provided')
+      const product = await this.prisma.product.findUnique({where: {id: productId}})
+      if (!product) return false
+    }
+    return true
+  }
 
   async calculateOrderTotal(order: Order[]): Promise<number> {
     let total = 0;
@@ -49,10 +57,37 @@ export class FinancialRepository implements CalculateOrderTotalRepository, Creat
               id: cart.id
             }
           }
+        },
+        include: {
+          product: true,
+          cart: true
         }
       })
     }
-    return cart as any as CartModel
+    const returnCart = await this.prisma.cart.findUnique(
+      { 
+        where: {
+          id: cart.id
+        }, 
+        include: {
+          cartItem: {
+            include: {
+              product: {
+                include: { 
+                  category: true,
+                  package: true,
+                  unit: true,
+                  mainCategory: true,
+                  subCategory: true,
+                }
+              }
+            }
+          },
+          account: true 
+        }
+      }
+    )
+    return returnCart as any as CartModel
   }
 
   async createPurchase(cartId: string): Promise<PurchaseModel> { 

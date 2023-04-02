@@ -41,7 +41,7 @@ model Product {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   CartItem             CartItem[]
-  ProductToSubCategory ProductToSubCategory[]
+  SubCategoryToProduct SubCategoryToProduct[]
   category             Category[]             @relation("CategoryToProduct")
   mainCategory         MainCategory[]         @relation("MainCategoryToProduct")
   package              Package[]              @relation("PackageToProduct")
@@ -89,35 +89,29 @@ model MainCategory {
 model SubCategory {
   id                   String                 @id @unique @default(uuid())
   name                 String                 @unique
-  ProductToSubCategory ProductToSubCategory[]
+  SubCategoryToProduct SubCategoryToProduct[]
 }
 
 model Cart {
-  id    String @id @unique @default(uuid())
-  total Float  @default(0)
-
-  account   Account? @relation(fields: [accountId], references: [id])
+  id        String     @id @unique @default(uuid())
   accountId String?
-
-  cartItem CartItem[]
-
+  total     Float      @default(0)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  account   Account?   @relation(fields: [accountId], references: [id])
+  cartItem  CartItem[]
   Purchase  Purchase[]
 }
 
 model CartItem {
-  id       String @id @unique @default(uuid())
-  quantity Int
-
-  product   Product? @relation(fields: [productId], references: [id])
+  id        String   @id @unique @default(uuid())
   productId String?
-
-  cart   Cart?   @relation(fields: [cartId], references: [id])
-  cartId String?
-
+  quantity  Int
+  cartId    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  cart      Cart?    @relation(fields: [cartId], references: [id])
+  product   Product? @relation(fields: [productId], references: [id])
 }
 
 model Purchase {
@@ -129,37 +123,21 @@ model Purchase {
   status          String   @default("pending")
   createDate      DateTime @default(now())
   updateDate      DateTime @updatedAt
-
-  cart   Cart?   @relation(fields: [cartId], references: [id])
-  cartId String?
-
-  account   Account? @relation(fields: [accountId], references: [id])
-  accountId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  cartId          String?
+  accountId       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  account         Account? @relation(fields: [accountId], references: [id])
+  cart            Cart?    @relation(fields: [cartId], references: [id])
 }
 
-// export interface PurchaseModel { 
-//   id: string;
-//   cart: CartModel;
-//   account: AccountModel,
-//   paymentMethod: string;
-//   shippingAddress: string;
-//   shippingPrice: number;
-//   total: number;
-//   status: 'pending' | 'approved' | 'canceled' | 'refunded' | 'shipped' | 'delivered' | 'returned' | 'disputed';
-//   createDate: Date;
-//   updateDate: Date;
-// }
-
-model ProductToSubCategory {
+model SubCategoryToProduct {
   A              String
   B              String
   SubCategory    SubCategory @relation(fields: [B], references: [id], onDelete: Cascade)
   rmoura_product Product     @relation(fields: [A], references: [id], onDelete: Cascade)
 
-  @@unique([A, B], map: "_ProductToSubCategory_AB_unique")
-  @@index([B], map: "_ProductToSubCategory_B_index")
-  @@map("_ProductToSubCategory")
+  @@unique([A, B], map: "_SubCategoryToProduct_AB_unique")
+  @@index([B], map: "_SubCategoryToProduct_B_index")
+  @@map("_SubCategoryToProduct")
 }

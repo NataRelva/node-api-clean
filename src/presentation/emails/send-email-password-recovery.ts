@@ -1,4 +1,6 @@
-import { SendEmailPasswordRecovery } from './../../services/useCases/send-mail-recovery-password';
+interface SendEmailPasswordRecovery {
+    send(account: AccountModel): Promise<void>
+}
 import { SendEmail, SendEmailData } from './../protocols/send-email';
 import env from '../../main/config/env';
 import { AccountModel } from './../../domain/models/account/account';
