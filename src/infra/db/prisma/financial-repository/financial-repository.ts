@@ -91,7 +91,17 @@ export class FinancialRepository implements CalculateOrderTotalRepository, Creat
   }
 
   async createPurchase(cartId: string): Promise<PurchaseModel> { 
-    const cart = await this.prisma.cart.findUnique({where: {id: cartId}})
+    const cart = await this.prisma.cart.findUnique({
+      where: {id: cartId},
+      include: { 
+        cartItem: { 
+          include: { 
+            product: true,
+          }
+        },
+        account: true
+      }
+    })
     const purchase = await this.prisma.purchase.create({ 
       data: {
         cart: {
@@ -109,6 +119,27 @@ export class FinancialRepository implements CalculateOrderTotalRepository, Creat
         paymentMethod: '',
         total: cart.total,
         status: 'pending',
+      },
+      include: { 
+        cart: { 
+          include: { 
+            cartItem: {
+              include: { 
+                product: {
+                  include: {
+                    category: true,
+                    package: true,
+                    unit: true,
+                    mainCategory: true,
+                    subCategory: true,
+                  }
+                }
+              }
+            },
+            account: true
+          }
+        },
+        account: true
       }
     })  as any as PurchaseModel
     return purchase

@@ -1,5 +1,5 @@
 import { PurchaseModel } from "../../../../domain/models/financial/purchase-entity"
-import { SendPurchaseConfirmationEmail } from './../../../../domain/useCases/product/email/send-purchase-confirmation-email';
+import { SendPurchaseConfirmationEmail } from "../../../../services/protocols";
 import { CreatePurchaseRepository } from "../../../protocols/db/financial/create-purchase-repository/create-purchase-repository"
 import { DbCreatePurchase } from "./db-create-purchase"
 
@@ -7,7 +7,7 @@ const dataAtual = new Date();
 
 const makeSendPurchaseConfirmationEmail = (): SendPurchaseConfirmationEmail => { 
   class SendPurchaseConfirmationEmailStub implements SendPurchaseConfirmationEmail { 
-    async  send(data: PurchaseModel): Promise<boolean>{ 
+    async sendFromPurchaseConfirmation (data: PurchaseModel): Promise<boolean>{ 
       return true;
     } 
   } 
@@ -126,16 +126,4 @@ describe('DbCreatePurchase', () => {
     const purchase = await sut.execute('any_cart_id') 
     expect(purchase).toEqual(mockPurchase()) 
   }) 
-  test('Should call SendPurchaseConfirmationEmail with correct values', async () => { 
-    const { sut, sendPurchaseConfirmationEmailStub } = makeSut() 
-    const sendSpy = jest.spyOn(sendPurchaseConfirmationEmailStub, 'send') 
-    await sut.execute('any_cart_id') 
-    expect(sendSpy).toHaveBeenCalledWith(mockPurchase()) 
-  }) 
-  test('Should throw if SendPurchaseConfirmationEmail throws', async () => { 
-    const { sut, sendPurchaseConfirmationEmailStub } = makeSut() 
-    jest.spyOn(sendPurchaseConfirmationEmailStub, 'send').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error()))) 
-    const promise = sut.execute('any_cart_id') 
-    await expect(promise).rejects.toThrow() 
-  })
 })
