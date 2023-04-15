@@ -10,7 +10,6 @@ export class DbCreatePurchase implements CreatePurchase {
   ) {}
   async execute(cartId: string): Promise<PurchaseModel> {
     const purchase = await this.createPurchaseRepository.createPurchase(cartId)
-    console.log('purchase', purchase)
     await this.sendPurchaseConfirmationEmail.sendFromPurchaseConfirmation(purchase)
     return purchase
   }

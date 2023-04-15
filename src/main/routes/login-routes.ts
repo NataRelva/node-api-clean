@@ -7,7 +7,7 @@ import { makeSignupController } from "../factories/singup/singup"
 
 export default function (router: Router): void {
     const adminAuth = adaptMiddleware(makeAuthMiddleware("admin"));
-    router.post("/singup", adaptRoute(makeSignupController()));
-    // router.post("/login", adminAuth, adaptRoute(makeLoginController()));
+    router.post("/signup", adaptRoute(makeSignupController()));
     router.post("/login", adaptRoute(makeLoginController()));
+    // router.post("/login", adminAuth, adaptRoute(makeLoginController()));
 }

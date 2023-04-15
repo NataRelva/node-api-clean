@@ -9,11 +9,27 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
   constructor(private readonly prisma: PrismaClient) { }
 
   async getRmoura(): Promise<any> {
-    const where = { product: { some: { provider: 'rmoura' } } }
-    const units = await this.prisma.unit.findMany({ where })
-    const packages = await this.prisma.package.findMany({ where })
-    const categories = await this.prisma.category.findMany({ where })
-    return { units, packages, categories }
+    let where = { product: { some: { provider: 'rmoura' } } }
+    const units_rmoura = await this.prisma.unit.findMany({where})
+    const packages_rmoura = await this.prisma.package.findMany({where})
+    const categories_rmoura = await this.prisma.category.findMany({where})
+    where = { product: { some: { provider: 'celmar' } } }
+    const mainCategory = await this.prisma.mainCategory.findMany({where})
+    const subCategory = await this.prisma.subCategory.findMany({where})
+    const packages_celmar = await this.prisma.package.findMany({where})
+    
+    return { 
+      rmoura: {
+        units: units_rmoura,
+        packages: packages_rmoura,
+        categories: categories_rmoura,
+      },
+      celmar: {
+        mainCategory,
+        subCategory,
+        packages: packages_celmar,
+      }
+    }
   }
 
   async getCelmar(): Promise<any> {
@@ -70,7 +86,11 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
 
   }
   
-  async pullRmoura(props: FilterRequest): Promise<ProductModel[]> {
+  async pullRmoura(props: FilterRequest): Promise<{
+    currentPage: number;
+    totalPages: number;
+    products: ProductModel[]
+  }> {
     const { filter, paginator, text } = props;
     const { page, limit } = paginator;
     const { categoryId, unitId, packageId, price } = filter;
@@ -98,10 +118,20 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
       take: limit,
       skip: page !== 0 ? (page - 1) * limit : 0,
     }) as any as ProductModel[]
-    return products;
+    const total = await this.prisma.product.count({ where });
+    const totalPages = Math.ceil(total / limit);
+    return { 
+      currentPage: page,
+      totalPages,
+      products
+    }
   }
 
-  async pullCelmar(props: FilterRequest): Promise<ProductModel[]> {
+  async pullCelmar(props: FilterRequest): Promise<{
+    currentPage: number;
+    totalPages: number;
+    products: ProductModel[]
+  }> {
     const { filter, paginator, text } = props;
     const { page, limit } = paginator;
     const { mainCategoryId, subCategoryId, packageId, price } = filter;
@@ -128,6 +158,13 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
       },
       take: limit, skip: page !== 0 ? (page - 1) * limit : 0
     }) as any as ProductModel[]
-    return product
+    
+    const total = await this.prisma.product.count({ where });
+    const totalPages = Math.ceil(total / limit);
+    return { 
+      currentPage: page,
+      totalPages,
+      products: product
+    }
   }
 }

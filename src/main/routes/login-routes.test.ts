@@ -59,18 +59,18 @@ const makeRequest = (): HttpRequest => {
 describe('Login Router', () => {
     describe('POST /signup', () => {
         const request = supertest(app)
-        test('Should return an account on singup', async () => {
+        test('Should return an account on signup', async () => {
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send(makeRequest().body)
 
             expect(response.status).toBe(200)
             expect(response.body).toEqual({ accessToken: null })
         })
 
-        test('Should return 400 if singup fails', async () => { 
+        test('Should return 400 if signup fails', async () => { 
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send({
                     name: 'any_name',
                     email: 'any_email@gmail.com',
@@ -83,7 +83,7 @@ describe('Login Router', () => {
 
         test('Should return 400 if request body is empty', async () => { 
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send({})
 
             expect(response.status).toBe(400)
@@ -91,7 +91,7 @@ describe('Login Router', () => {
 
         test('Should return 400 if request not fild cpfCnpj account ', async () => { 
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send({
                     name: 'any_name',
                     email: 'any_email@gmail.com',
@@ -104,7 +104,7 @@ describe('Login Router', () => {
 
         test('Should return 400 if request not fild name account ', async () => { 
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send({
                     email: '',
                     phone: '999929222',
@@ -117,7 +117,7 @@ describe('Login Router', () => {
 
         test('Should return 400 if request not fild email account ', async () => { 
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send({
                     name: 'any_name',
                     phone: '999929222',
@@ -130,7 +130,7 @@ describe('Login Router', () => {
 
         test('Should return 400 if request not fild phone account ', async () => { 
             const response = await request
-                .post('/api/singup')
+                .post('/api/signup')
                 .send({
                     name: 'any_name',
                     email: 'any_an@gmail.com',
