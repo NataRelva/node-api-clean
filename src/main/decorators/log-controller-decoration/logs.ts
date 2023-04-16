@@ -3,12 +3,11 @@ import { Controller } from "../../../presentation/protocols/controller"
 import { HttpRequest, HttpResponse } from "../../../presentation/protocols/http"
 
 export class LogControllerDecorator implements Controller {
-    private readonly controller: Controller
-    private readonly logErrorRepository: LogErrorRepository
-    constructor(controller: Controller, logErrorRepository: LogErrorRepository) {
-        this.controller = controller
-        this.logErrorRepository = logErrorRepository
-    }
+    
+    constructor(
+        private readonly controller: Controller,
+        private readonly logErrorRepository: LogErrorRepository
+    ) {}
 
     async handle(request: HttpRequest): Promise<HttpResponse> {
         const httpResponse = await this.controller.handle(request)

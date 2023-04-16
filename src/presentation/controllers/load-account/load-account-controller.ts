@@ -1,6 +1,6 @@
 import { LoadAccountByToken } from "../../middlewares/auth-middleware-protocols";
 import { Controller, HttpRequest, HttpResponse } from "../../protocols";
-import { serverError, ok, badRequest } from "../login/login-controllers-protocols";
+import { ok, badRequest } from "../login/login-controllers-protocols";
 
 export class LoadAccountController implements Controller {
   constructor(
@@ -14,7 +14,7 @@ export class LoadAccountController implements Controller {
       if (!account) return badRequest(new Error('Token inválido!'))
       return ok(account)
     } catch (error) {
-      return serverError(new Error('token invalido'))
+      return badRequest(error)
     }
   }
 }

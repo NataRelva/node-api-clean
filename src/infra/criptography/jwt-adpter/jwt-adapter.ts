@@ -1,6 +1,6 @@
+import jwt from "jsonwebtoken"
 import { RandomUuid } from './../../../data/protocols/criptography/random';
 import { Decrypter } from './../../../data/protocols/criptography/decrypter';
-import jwt from "jsonwebtoken"
 import { Encrypter } from "../../../data/protocols/criptography/encrypter"
 
 export class JwtAdapter implements Encrypter, Decrypter, RandomUuid {
