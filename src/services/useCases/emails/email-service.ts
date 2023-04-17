@@ -3,7 +3,7 @@ import sendGrid from "@sendgrid/mail";
 
 import { AccountModel } from './../../../domain/models/account/account';
 import { SendPurchaseConfirmationEmail, SendEmailPasswordRecovery } from './../../protocols';
-import { PurchaseModel } from './../../../domain/models/financial/purchase-entity';
+import { DataPurchaseEmail } from './../../../domain/models/financial/purchase-entity';
 
 export class EmailService implements SendEmailPasswordRecovery, SendPurchaseConfirmationEmail {
 
@@ -26,14 +26,14 @@ export class EmailService implements SendEmailPasswordRecovery, SendPurchaseConf
     sendGrid.send(sendEmailData)
   }
 
-  async sendFromPurchaseConfirmation(purchaseData: PurchaseModel): Promise<boolean> {
+  async sendFromPurchaseConfirmation(purchaseData: DataPurchaseEmail): Promise<boolean> {
     const sendEmailData = { 
-      to: purchaseData.account.email,
+      to: purchaseData.user_email,
       from: env.emailFrom,
       subject: 'Confirmação de compra',
       templateId: env.templateIdPurchaseConfirmation,
       dynamicTemplateData: { 
-        purchaseData
+        ...purchaseData
       }
     }
     try {

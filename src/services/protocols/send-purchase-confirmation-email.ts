@@ -1,4 +1,4 @@
-import { PurchaseModel } from './../../domain/models/financial/purchase-entity';
+import { DataPurchaseEmail } from './../../domain/models/financial/purchase-entity';
 export interface SendPurchaseConfirmationEmail {
-  sendFromPurchaseConfirmation: (data: PurchaseModel) => Promise<boolean>
+  sendFromPurchaseConfirmation: (data: DataPurchaseEmail) => Promise<boolean>
 }
