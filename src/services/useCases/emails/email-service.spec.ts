@@ -1,6 +1,6 @@
 import sendGrid from "@sendgrid/mail"
 import { EmailService } from "./email-service"
-import { PurchaseModel } from "../../../domain/models/financial/purchase-entity"
+import { DataPurchaseEmail, PurchaseModel } from "../../../domain/models/financial/purchase-entity"
 
 import env from '../../../main/config/env'
 
@@ -26,7 +26,7 @@ describe('EmailService', () => {
       subject: 'Confirmação de compra',
       templateId: env.templateIdPurchaseConfirmation,
       dynamicTemplateData: { 
-        purchaseData: mockPurchase()
+        ...mockPurchase()
       }
     })
   })
@@ -37,38 +37,32 @@ describe('EmailService', () => {
   })
 })
 
-const mockPurchase = (): PurchaseModel => ({ 
+const mockPurchase = (): DataPurchaseEmail => ({ 
+  user_email: 'any_email',
+  user_name: 'any_name',
+  user_phone: 'any_phone',
+  cpfCnpj: 'any_cpfCnpj',
+  address_user: 'any_address_user',
+  Sender_Name: 'any_Sender_Name',
+  Sender_Address: 'any_Sender_Address',
+  Sender_State: 'any_Sender_State',
+  Sender_City: 'any_Sender_City',
+  Sender_Zip: 'any_Sender_Zip',
+  date: {
+    mm: 'any_mm',
+    dd: 'any_dd',
+    yy: 'any_yy'
+  },
   id: 'any_id',
-  cart: {
-    id: 'any_cart_id',
-    account: {
-      id: 'any_account_id',
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password',
-      phone: 'any_phone',
-      cpfCnpj: 'any_cpfCnpj',
-      accessToken: 'any_accessToken'      
-    },
-    cartItem: [],
-    total: 100
-  },
-  account: { 
-    id: 'any_account_id',
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password',
-      phone: 'any_phone',
-      cpfCnpj: 'any_cpfCnpj',
-      accessToken: 'any_accessToken' 
-  },
-  paymentMethod: 'any_paymentMethod',
-  shippingAddress: 'any_shippingAddress',
-  shippingPrice: 10,
-  total: 110,
-  status: 'pending',
-  createDate: dataAtual,
-  updateDate: dataAtual
+  purchase_id: 'any_purchase_id',
+  total: 'any_total',
+  products: {
+    data: [{
+      product_name: 'any_product_name',
+      quantity: 'any_quantity',
+      sub_total: 1
+    }]
+  }
 })
 
 

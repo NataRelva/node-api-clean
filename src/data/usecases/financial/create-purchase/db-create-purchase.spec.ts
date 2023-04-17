@@ -1,4 +1,4 @@
-import { PurchaseModel } from "../../../../domain/models/financial/purchase-entity"
+import { DataPurchaseEmail, PurchaseModel } from "../../../../domain/models/financial/purchase-entity"
 import { SendPurchaseConfirmationEmail } from "../../../../services/protocols";
 import { CreatePurchaseRepository } from "../../../protocols/db/financial/create-purchase-repository/create-purchase-repository"
 import { DbCreatePurchase } from "./db-create-purchase"
@@ -7,7 +7,7 @@ const dataAtual = new Date();
 
 const makeSendPurchaseConfirmationEmail = (): SendPurchaseConfirmationEmail => { 
   class SendPurchaseConfirmationEmailStub implements SendPurchaseConfirmationEmail { 
-    async sendFromPurchaseConfirmation (data: PurchaseModel): Promise<boolean>{ 
+    async sendFromPurchaseConfirmation (data: DataPurchaseEmail ): Promise<boolean>{ 
       return true;
     } 
   } 
