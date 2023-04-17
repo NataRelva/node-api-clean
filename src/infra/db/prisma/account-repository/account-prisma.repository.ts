@@ -12,9 +12,10 @@ const prisma = new PrismaClient();
 
 export class AccountPrismaRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, ChangeAccountPasswordRepository, UpdatePasswordResetToken {
     async updatePasswordResetToken(email: string, passwordResetToken: string, passwordResetExpires: Date): Promise<AccountModel | null> { 
-        const account = await prisma.account.update({ where: { email }, data: { passwordResetToken, passwordResetExpires } });
-        if (!account) return null
-        return account as AccountModel
+        console.log('passwordResetToken', passwordResetExpires)
+        const account = await prisma.account.findUnique({ where: { email } });
+        if (!account) throw new Error('Email não encontrado!')
+        return await prisma.account.update({ where: { email }, data: { passwordResetToken, passwordResetExpires }});
     }
     
     async change(email: string, password: string): Promise<void> {

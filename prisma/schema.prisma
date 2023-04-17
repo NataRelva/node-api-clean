@@ -32,20 +32,20 @@ model Log {
 }
 
 model Product {
-  id                   String                 @id @unique @default(uuid())
-  name                 String
-  weight               Float
-  obs                  String
-  price                Float
-  provider             String
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  CartItem             CartItem[]
-  SubCategoryToProduct SubCategoryToProduct[]
-  category             Category[]             @relation("CategoryToProduct")
-  mainCategory         MainCategory[]         @relation("MainCategoryToProduct")
-  package              Package[]              @relation("PackageToProduct")
-  unit                 Unit[]                 @relation("ProductToUnit")
+  id           String         @id @unique @default(uuid())
+  name         String
+  weight       Float
+  obs          String
+  price        Float
+  provider     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  CartItem     CartItem[]
+  mainCategory MainCategory[] @relation("MainCategoryToProduct")
+  subCategory  SubCategory[]  @relation("SubCategoryToProduct")
+  category     Category[]     @relation("CategoryToProduct")
+  package      Package[]      @relation("PackageToProduct")
+  unit         Unit[]         @relation("ProductToUnit")
 
   @@map("rmoura_product")
 }
@@ -63,9 +63,9 @@ model Unit {
 model Package {
   id        String    @id @unique @default(uuid())
   name      String    @unique
+  product   Product[] @relation("PackageToProduct")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  product   Product[] @relation("PackageToProduct")
 
   @@map("rmoura_package")
 }
@@ -73,23 +73,27 @@ model Package {
 model Category {
   id        String    @id @unique @default(uuid())
   name      String    @unique
+  product   Product[] @relation("CategoryToProduct")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  product   Product[] @relation("CategoryToProduct")
 
   @@map("rmoura_category")
 }
 
 model MainCategory {
-  id      String    @id @unique @default(uuid())
-  name    String    @unique
-  product Product[] @relation("MainCategoryToProduct")
+  id        String    @id @unique @default(uuid())
+  name      String    @unique
+  product   Product[] @relation("MainCategoryToProduct")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model SubCategory {
-  id                   String                 @id @unique @default(uuid())
-  name                 String                 @unique
-  SubCategoryToProduct SubCategoryToProduct[]
+  id        String    @id @unique @default(uuid())
+  name      String    @unique
+  product   Product[] @relation("SubCategoryToProduct")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Cart {
@@ -100,7 +104,7 @@ model Cart {
   updatedAt DateTime   @updatedAt
   account   Account?   @relation(fields: [accountId], references: [id])
   cartItem  CartItem[]
-  Purchase  Purchase[]
+  purchase  Purchase[]
 }
 
 model CartItem {
@@ -129,15 +133,4 @@ model Purchase {
   updatedAt       DateTime @updatedAt
   account         Account? @relation(fields: [accountId], references: [id])
   cart            Cart?    @relation(fields: [cartId], references: [id])
-}
-
-model SubCategoryToProduct {
-  A              String
-  B              String
-  SubCategory    SubCategory @relation(fields: [B], references: [id], onDelete: Cascade)
-  rmoura_product Product     @relation(fields: [A], references: [id], onDelete: Cascade)
-
-  @@unique([A, B], map: "_SubCategoryToProduct_AB_unique")
-  @@index([B], map: "_SubCategoryToProduct_B_index")
-  @@map("_SubCategoryToProduct")
 }
