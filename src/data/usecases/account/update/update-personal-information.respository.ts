@@ -11,7 +11,7 @@ export class DbUpdatePersonalInformation implements UpdatePersonalInformation {
   async execute(data: {
     accountId: string
     name: string
-    email: string
+    cpfCnpj: string
     phone: string
   }): Promise<AccountModel> {
     const updatedAccount = await this.updatePersonalInformationRepository.updatePersonalInformation(data)

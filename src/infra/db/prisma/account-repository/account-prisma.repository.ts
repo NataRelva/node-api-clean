@@ -9,19 +9,40 @@ import { AddAccountRepository } from './../../../../data/protocols/db/account/ad
 import { AccountModel } from './../../../../domain/models/account/account';
 import { UpdatePersonalInformation } from '../../../../domain/useCases/account/update-personal-information.usecase';
 import { UpdatePersonalInformationRepository } from '../../../../data/protocols/db/account/update-personal-information-repository';
+import { UpdateEmailRepository } from '../../../../data/protocols/db/account/update-email.repository';
 
 const prisma = new PrismaClient();
 
-export class AccountPrismaRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, ChangeAccountPasswordRepository, UpdatePasswordResetToken, UpdatePersonalInformationRepository {
+export class AccountPrismaRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, ChangeAccountPasswordRepository, UpdatePasswordResetToken, UpdatePersonalInformationRepository, UpdateEmailRepository {
     
+    async updateEmail (data: { accountId: string; email: string; }): Promise<AccountModel> {
+        const account = await prisma.account.findUnique({ where: { id: data.accountId } });
+        if (!account) throw new Error('Conta não encontrada!');
+        const existingAccount = await prisma.account.findUnique({ where: { email: data.email } });
+        if (existingAccount && existingAccount.id !== account.id) throw new Error('O email já está em uso!');
+        const updatedAccount = await prisma.account.update({ 
+            where: { id: account.id },
+            data: { email: data.email }
+        });
+        return updatedAccount;
+    }
+
+
     async updatePersonalInformation(data: { 
         accountId: string
         name: string
-        email: string
+        cpfCnpj: string
         phone: string
-    } ): Promise<AccountModel> { 
-        const updatedAccount = await prisma.account.update({ where: { id: data.accountId }, data: { name: data.name, email: data.email, phone: data.phone } });
-        return updatedAccount as AccountModel;
+    }): Promise<AccountModel> {
+        const account = await prisma.account.findUnique({ where: { id: data.accountId } });
+        if (!account) throw new Error('Conta não encontrada!')
+        const existingAccount = await prisma.account.findUnique({ where: { cpfCnpj: data.cpfCnpj } });
+        if (existingAccount && existingAccount.id !== account.id) throw new Error('O email já está em uso!');
+        const updatedAccount = await prisma.account.update({
+            where: { id: account.id },
+            data: { name: data.name, phone: data.phone, email: data.cpfCnpj },
+        });
+        return updatedAccount;
     }
     
     async updatePasswordResetToken(email: string, passwordResetToken: string, passwordResetExpires: Date): Promise<AccountModel | null> { 

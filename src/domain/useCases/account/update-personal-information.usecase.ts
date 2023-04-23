@@ -3,7 +3,7 @@ import { AccountModel } from "../../models/account"
 interface ParamsUpdate {
   accountId: string
   name: string
-  email: string
+  cpfCnpj: string
   phone: string
 }
 

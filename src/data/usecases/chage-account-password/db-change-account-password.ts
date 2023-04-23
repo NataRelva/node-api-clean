@@ -8,14 +8,14 @@ export class DbChangeAccountPassword implements ChangeAccountPassword {
         private readonly loadAccountByEmail: LoadAccountByEmailRepository,
         private readonly hasher: Hasher,
     ) { }
-    async change(token: string, email: string, password: string): Promise<void> {
+    async change(token: string, email: string, password: string, call: 'login' | 'profile' = 'login'): Promise<void> {
         const account = await this.loadAccountByEmail.loadByEmail(email)
         if (!account) throw new Error('Email não encontrado!')
-        if (account.passwordResetExpires) {
+        if (account.passwordResetExpires && call === 'login') {
             const tokenResetExpiration = new Date(account.passwordResetExpires)
             if (tokenResetExpiration < new Date()) throw new Error('Token expirado!')
         }
-        if (account.passwordResetToken !== token) throw new Error('Token inválido!')
+        if (account.passwordResetToken !== token && call == 'login') throw new Error('Token inválido!')
         const newPassword = await this.hasher.hash(password)
         await this.changeAccountPasswordRepository.change(email, newPassword)
     }

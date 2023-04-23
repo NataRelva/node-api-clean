@@ -4,7 +4,7 @@ export interface UpdatePersonalInformationRepository {
   updatePersonalInformation(data: { 
     accountId: string
     name: string
-    email: string
+    cpfCnpj: string
     phone: string
   }) : Promise<AccountModel>
 }
