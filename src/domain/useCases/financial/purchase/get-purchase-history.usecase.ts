@@ -1,28 +1,22 @@
-export interface PurchaseHistory {
-  id: number; // identificador único da compra
-  date: Date; // data da compra
-  products: Product[]; // array de produtos comprados
-  totalAmount: number; // valor total da compra
-  shippingAddress: Address; // endereço de entrega
-}
+import { PurchaseModel } from "../../../models/financial/purchase-entity";
+import { CartModel } from "../../../models/product";
 
-interface Product {
-  id: number; // identificador único do produto
-  name: string; // nome do produto
-  price: number; // preço unitário do produto
-  quantity: number; // quantidade comprada do produto
-}
-
-interface Address {
-  street: string; // nome da rua
-  number: number; // número da residência
-  complement?: string; // complemento do endereço (opcional)
-  city: string; // cidade
-  state: string; // estado
-  country: string; // país
-  zipCode: string; // código postal
+export interface PurchaseHistoryGroupedByYearMonth {
+  year: {
+    label: string;
+    total: number;
+    month: {
+      label: string;
+      total: number;
+      day: {
+        label: string;
+        total: number;
+        purchases: PurchaseModel[];
+      }[]
+    }[]
+  }[]
 }
 
 export interface GetPurchaseHistory {
-  execute(accountId: string): Promise<PurchaseHistory[]>
+  get(accountId: string): Promise<PurchaseHistoryGroupedByYearMonth>
 }

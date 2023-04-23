@@ -28,7 +28,8 @@ const mockPurchase = (): PurchaseModel => ({
       accessToken: 'any_accessToken'      
     },
     cartItem: [],
-    total: 100
+    total: 100,
+    createDate: dataAtual,
   },
   account: { 
     id: 'any_account_id',
@@ -44,8 +45,8 @@ const mockPurchase = (): PurchaseModel => ({
   shippingPrice: 10,
   total: 110,
   status: 'pending',
-  createDate: dataAtual,
-  updateDate: dataAtual
+  createdAt: dataAtual,
+  updatedAt: dataAtual,
 })
 
 const mockPurchaseParams = (): PurchaseModel => ({ 
@@ -62,7 +63,8 @@ const mockPurchaseParams = (): PurchaseModel => ({
       accessToken: 'any_accessToken'      
     },
     cartItem: [],
-    total: 100
+    total: 100,
+    createDate: dataAtual,
   },
   account: { 
     id: 'any_account_id',
@@ -78,8 +80,8 @@ const mockPurchaseParams = (): PurchaseModel => ({
   shippingPrice: 10,
   total: 110,
   status: 'pending',
-  createDate: dataAtual,
-  updateDate: dataAtual
+  createdAt: dataAtual,
+  updatedAt: dataAtual,
 })
 
 const makeCreatePurchaseRepository = (): CreatePurchaseRepository => { 

@@ -5,7 +5,6 @@ import { LoadAccountByToken } from './../../../../domain/useCases/account/load-a
 import env from '../../../config/env';
 
 export const makeDbLoadAccountByToken = (): LoadAccountByToken => {
-    console.log('ENV: ', env.jwtSecret)
     const accountPrismaRepository = new AccountPrismaRepository();
     const jwtAdapter = new JwtAdapter(env.jwtSecret);
     return new DbLoadAccountByToken(jwtAdapter, accountPrismaRepository);

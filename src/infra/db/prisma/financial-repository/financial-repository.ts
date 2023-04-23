@@ -4,13 +4,100 @@ import { CartModel } from './../../../../domain/models/product/cart';
 import { Order } from './../../../../domain/models/logistics/order';
 import { CalculateOrderTotalRepository } from './../../../../data/protocols/db/financial/calculate-order-total/calculate-order-total-repository';
 import { CreateCartRepository } from './../../../../data/protocols/db/financial/create-cart-repository/create-cart-repository';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Purchase } from '@prisma/client';
 import { CheckProductAvailabilityRepository } from '../../../../data/protocols/db/product/check-product-availability-repository';
+import { PurchaseHistoryGroupedByYearMonth } from '../../../../domain/useCases/financial/purchase/get-purchase-history.usecase';
+import { PurchaseRepository } from '../../../../data/protocols/db/purchase/get-purchase-history-repository';
 
-export class FinancialRepository implements CalculateOrderTotalRepository, CreateCartRepository, CreatePurchaseRepository, CheckProductAvailabilityRepository {
+export class FinancialRepository implements CalculateOrderTotalRepository, CreateCartRepository, CreatePurchaseRepository, CheckProductAvailabilityRepository, PurchaseRepository {
   constructor(
     private readonly prisma: PrismaClient
   ) {}
+
+  async getPurchaseById(purchaseId: string): Promise<PurchaseModel[]> {
+    const purchases = await this.prisma.purchase.findMany({
+      where: {accountId: purchaseId},
+      include: {
+        cart: {
+          include: {
+            cartItem: {
+              include: { 
+                product: true
+              }
+            },
+            account: true,
+            purchase: true,
+          },
+        },
+        account: true,
+      }
+    })
+    return purchases as any as PurchaseModel[]
+  }
+  
+  async getHistory(purchases: PurchaseModel[]): Promise<PurchaseHistoryGroupedByYearMonth> {
+    const history: PurchaseHistoryGroupedByYearMonth = { year: [] };
+    for (const purchase of purchases) {
+      const date = new Date(purchase.createdAt);
+      const year = date.getFullYear().toString();
+      const month = date.getMonth().toString();
+      const day = date.getDate().toString();
+      let yearIndex = history.year.findIndex(yearItem => yearItem.label === year);
+      if (yearIndex === -1) {
+        // If year doesn't exist in history, add it with the purchase data
+        const newYear = {
+          label: year,
+          total: purchase.total,
+          month: [{
+            label: month,
+            total: purchase.total,
+            day: [{
+              label: day,
+              total: purchase.total,
+              purchases: [purchase]
+            }]
+          }]
+        };
+        history.year.push(newYear);
+      } else {
+        let monthIndex = history.year[yearIndex].month.findIndex(monthItem => monthItem.label === month);
+        if (monthIndex === -1) {
+          // If month doesn't exist in the year, add it with the purchase data
+          const newMonth  = {
+            label: month,
+            total: purchase.total,
+            day: [{
+              label: day,
+              total: purchase.total,
+              purchases: [purchase]
+            }]
+          };
+          history.year[yearIndex].month.push(newMonth);
+        } else {
+          let dayIndex = history.year[yearIndex].month[monthIndex].day.findIndex(dayItem => dayItem.label === day);
+  
+          if (dayIndex === -1) {
+            // If day doesn't exist in the month, add it with the purchase data
+            const newDay  = {
+              label: day,
+              total: purchase.total,
+              purchases: [purchase]
+            };
+            history.year[yearIndex].month[monthIndex].day.push(newDay);
+          } else {
+            // If day already exists in the month, add the purchase data to it
+            history.year[yearIndex].month[monthIndex].day[dayIndex].purchases.push(purchase);
+            history.year[yearIndex].month[monthIndex].day[dayIndex].total += purchase.total;
+          }
+          // Update the total for the month and year
+          history.year[yearIndex].month[monthIndex].total += purchase.total;
+        }
+        // Update the total for the year
+        history.year[yearIndex].total += purchase.total;
+      }
+    }
+    return history;
+  }
 
   async checkAvailability(data: Order[]): Promise<boolean> {
     for(const { productId, quantity } of data) {

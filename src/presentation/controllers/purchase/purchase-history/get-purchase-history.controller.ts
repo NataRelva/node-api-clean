@@ -11,8 +11,8 @@ export class GetPurchaseHistoryController implements Controller {
     try {
       const { accountId } = request.body;
       if (!accountId) return badRequest(new MissingParamError('accountId'));
-      const purchases = this.getPurchaseHistory.execute(accountId);
-      return ok({ purchases })
+      const history = await this.getPurchaseHistory.get(accountId);
+      return ok({ history })
     } catch (error) {
       return serverError(error);
     }

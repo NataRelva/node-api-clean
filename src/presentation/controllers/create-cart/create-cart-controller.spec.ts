@@ -50,7 +50,8 @@ const makeCreateCart = () => {
         id: 'any_id',
         account: this.fakeAccount,
         cartItem: this.fakeCartItem,        
-        total: 1
+        total: 1,
+        createDate: new Date()
       }
       return fakeCartModel
     }

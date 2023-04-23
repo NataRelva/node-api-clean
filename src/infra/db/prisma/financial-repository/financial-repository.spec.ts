@@ -45,9 +45,10 @@ const makeFakeCart = (): CartModel => ({
       mainCategory: [],
       subCategory: [],
     },
-    quantity: 1
+    quantity: 1,
   }],
-  total: 1
+  total: 1,
+  createDate: new Date()
 })
 
 interface SutTypes { 

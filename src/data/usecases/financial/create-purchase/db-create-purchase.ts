@@ -29,9 +29,9 @@ export class DbCreatePurchase implements CreatePurchase {
       Sender_City: '',
       Sender_Zip: '',
       date: {
-        mm: purchase.createDate.getMonth() < 10 ? `0${purchase.createDate.getMonth()}` : purchase.createDate.getMonth().toString(),
-        dd: purchase.createDate.getDate() < 10 ? `0${purchase.createDate.getDate()}` : purchase.createDate.getDate().toString(),
-        yy: purchase.createDate.getFullYear().toString()
+        mm: purchase.createdAt.getMonth() < 10 ? `0${purchase.createdAt.getMonth()}` : purchase.createdAt.getMonth().toString(),
+        dd: purchase.createdAt.getDate() < 10 ? `0${purchase.createdAt.getDate()}` : purchase.createdAt.getDate().toString(),
+        yy: purchase.createdAt.getFullYear().toString()
       },
       purchase_id: purchase.id,
       total: purchase.total.toString(),

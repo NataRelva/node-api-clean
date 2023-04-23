@@ -11,5 +11,6 @@ export interface CartModel {
   id: string,
   account: AccountModel
   cartItem: CartItem[],
-  total: number
+  total: number,
+  createDate: Date,
 }
