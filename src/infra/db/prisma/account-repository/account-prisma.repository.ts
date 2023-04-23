@@ -7,10 +7,23 @@ import { UpdateAccessTokenRepository } from './../../../../data/protocols/db/acc
 import { LoadAccountByEmailRepository } from './../../../../data/protocols/db/account/load-account-by-email.repository';
 import { AddAccountRepository } from './../../../../data/protocols/db/account/add-account-repository';
 import { AccountModel } from './../../../../domain/models/account/account';
+import { UpdatePersonalInformation } from '../../../../domain/useCases/account/update-personal-information.usecase';
+import { UpdatePersonalInformationRepository } from '../../../../data/protocols/db/account/update-personal-information-repository';
 
 const prisma = new PrismaClient();
 
-export class AccountPrismaRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, ChangeAccountPasswordRepository, UpdatePasswordResetToken {
+export class AccountPrismaRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository, ChangeAccountPasswordRepository, UpdatePasswordResetToken, UpdatePersonalInformationRepository {
+    
+    async updatePersonalInformation(data: { 
+        accountId: string
+        name: string
+        email: string
+        phone: string
+    } ): Promise<AccountModel> { 
+        const updatedAccount = await prisma.account.update({ where: { id: data.accountId }, data: { name: data.name, email: data.email, phone: data.phone } });
+        return updatedAccount as AccountModel;
+    }
+    
     async updatePasswordResetToken(email: string, passwordResetToken: string, passwordResetExpires: Date): Promise<AccountModel | null> { 
         console.log('passwordResetToken', passwordResetExpires)
         const account = await prisma.account.findUnique({ where: { email } });
