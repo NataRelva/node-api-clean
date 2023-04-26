@@ -8,5 +8,19 @@ export interface AccountModel {
     accessToken?: string
     role?: string
     passwordResetToken?: string
-    passwordResetExpires?: Date
+    passwordResetExpires?: Date,
+    address?: AddressModel[]
+}
+
+export interface AddressModel { 
+    id         : string
+    street     : string
+    number     : string
+    district   : string
+    city       : string
+    state      : string
+    zipCode    : string
+    createdAt  : Date
+    updatedAt  : Date
+    account    : AccountModel 
 }
