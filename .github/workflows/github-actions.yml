@@ -20,8 +20,6 @@ jobs:
       run: npm install
     - name: Run build task
       run: npm run build --if-present
-    - name: Set permissions on destination directory
-      run: chmod -R 777 /path/to/destination/directory
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@main
       env:
