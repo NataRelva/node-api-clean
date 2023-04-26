@@ -9,84 +9,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Deploy para meu hosting
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: -----BEGIN RSA PRIVATE KEY-----
-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
------END RSA PRIVATE KEY-----
-          ARGS: "-rltgoDzvO --delete"
+    - uses: actions/checkout@v3
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+    - name: Install npm dependencies
+      run: npm install
+    - name: Run build task
+      run: npm run build --if-present
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@main
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
           SOURCE: "dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
-
-      - name: Deploy to Docker Compose
-        uses: docker/build-push-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_REPOSITORY }}
-          tags: latest
-          path: .
-
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install docker-compose
-
-      - name: Build and Deploy Docker Compose
-        run: |
-          docker-compose up -d
-        
+          EXCLUDE: "/dist/, /node_modules/"
