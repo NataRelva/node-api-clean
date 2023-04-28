@@ -1,4 +1,4 @@
-import { SendEmailPasswordRecovery } from './../../../services/useCases/send-mail-recovery-password';
+
 import { PrepareAccountRecoverPassword } from './../../../data/protocols/db/account/prepare-account-recover-password';
 import { ErrorHandler } from './../../protocols/error-handler';
 
@@ -6,10 +6,11 @@ import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { ok, badRequest, unauthorized } from './../../helpers/http/http.helper';
 import { Controller } from './../../protocols/controller';
 import { ValidationComposite } from '../../helpers/validators/validations.composite';
+import { SendEmailPasswordRecoveryAdpter } from '../../emails/send-email-password-recovery';
 export class PasswordRecoveryController implements Controller {
     constructor(
         private readonly prepareAccountRecoverPassword: PrepareAccountRecoverPassword,
-        private readonly sendEmailPasswordRecovery: SendEmailPasswordRecovery,
+        private readonly sendEmailPasswordRecovery: SendEmailPasswordRecoveryAdpter,
         private readonly validator: ValidationComposite,
         private readonly errorHandler: ErrorHandler
     ) { }

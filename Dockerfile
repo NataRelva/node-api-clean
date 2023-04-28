@@ -35,6 +35,8 @@ COPY --from=build /app/ecosystem.config.js .
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma-prod ./prisma
 
+# Instala as dependências
+RUN npm install
 
 # Instala o PM2 globalmente
 RUN npm --global install pm2
