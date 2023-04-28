@@ -1,19 +1,21 @@
 import { HttpRequest, HttpResponse } from './../../protocols/http';
 import { MissingParamError } from './../../errors/missing-param.error';
-import { PullProductsRmoura } from './../../../domain/useCases/product/pull-products-rmoura';
+
 import { ErrorHandlerAdapter } from './../../../utils/error-handler-adapter';
 import { ok, badRequest } from './../../helpers/http/http.helper';
 import { Controller } from './../../protocols/controller';
-export class PullProductsRmouraController implements Controller {
+import { LoadProductsUsecase } from '../../../domain/useCases/product/load-products/load-products.usecase';
+export class LoadProductsController implements Controller {
   constructor(
-    private readonly pullProductsRmoura: PullProductsRmoura,
+    private readonly pullProductsRmoura: LoadProductsUsecase,
     private readonly handleError: ErrorHandlerAdapter,
   ) {}
   async handle(request: HttpRequest): Promise<HttpResponse> {
     const filter = request.body
+    const providerId = request.body.providerId
     try {
       if (!filter) return badRequest(new MissingParamError('filter'))
-      const products = await this.pullProductsRmoura.pull(filter)
+      const products = await this.pullProductsRmoura.execute(filter, providerId)
       return ok(products)
     } catch (error) {
       return this.handleError.handle(error)

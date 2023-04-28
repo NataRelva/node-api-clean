@@ -1,5 +1,5 @@
 import { Express, Router } from 'express';
-import fs from 'fs';
+const fs = require('fs');
 
 export default (app: Express): void => {
     const router = Router();

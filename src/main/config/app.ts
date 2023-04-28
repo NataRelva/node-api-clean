@@ -1,4 +1,4 @@
-import express from 'express';
+const express = require( 'express' );
 import middlewares from './middlewares';
 import routesSetup from './routes';
 const app = express();

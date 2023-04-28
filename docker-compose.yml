@@ -5,31 +5,28 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: pm2-runtime start ecosystem.config.js
+    command: 
+      - "npx prisma init --datasource-provider postgresql --schema ./dist/prisma/schema.prisma"
+      - "npx prisma generate"
+      - "pm2-runtime start ecosystem.config.js"
     restart: always
     environment:
       NODE_ENV: production
-      DATABASE_URL: "postgres://naturaldb:seitamachado98@localhost:5432/naturalapi_db"
+      DATABASE_URL: "postgres://naturaldb:seitamachado98@172.25.64.1:5432/naturalapi_db"
       SERVER_PORT: 3000
       TEMPLATE_ID_RECOVERY_PASSWORD: "d-464e201fb29b4ea3833bbf18b01ace98"
       SEND_GRID_KEY: "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"
       JWT_SECRET_KEY: "a3833bbf18b01ace98464e201"
       TEMPLATE_ID_PURCHASE_CONFIRMATION: "d-08eabc7af0f7497e87d3b6facaa8176e"
-    depends_on:
-      - db
     ports:
       - '3000:3000'
     networks:
       - app_net
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
+    
   db:
     image: postgres:15
-    environment:
-      POSTGRES_USER: naturaldb
-      POSTGRES_PASSWORD: seitamachado98
-      POSTGRES_DB: naturalapi_db
+    env_file:
+      - ./.docker.env
     ports:
       - "5432:5432"
     volumes:

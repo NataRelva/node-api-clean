@@ -1,6 +1,6 @@
+import { ProductResponse } from '../../../../domain/useCases/product/load-products/load-products.usecase';
 import { FilterRequest } from './../../../../domain/models/product/product-configuration';
-import { ProductModel } from './../../../../domain/models/product';
 
-export interface PullProductsRmouraRepository {
-  pullRmoura(props: FilterRequest): Promise<ProductModel[]>
+export interface ProductsRepository {
+  loadByProviderID(filterProps: FilterRequest, providerId: string): Promise<ProductResponse>
 }

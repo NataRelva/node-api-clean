@@ -1,4 +1,4 @@
-import { FilterResponse } from './../models/product-configuration';
+import { FilterResponse } from './../../models/product/product-configuration';
 export interface GetProductsFilter { 
   exec(): Promise<FilterResponse>
 }
