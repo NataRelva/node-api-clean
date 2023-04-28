@@ -51,4 +51,5 @@ jobs:
         with:
           node-version: 16.x
       - run: docker build ./
-      - run: echo "Deploy"
+      - run: echo "Publicar imagem"
+      - run: docker-compose up
