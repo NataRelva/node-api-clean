@@ -46,9 +46,28 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: Deploy with SSH
+        uses: easingthemes/ssh-deploy@main
         with:
-          node-version: 16.x
-      - run: docker build ./
-      - run: echo "Publicar imagem"
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-host: api.madeinnatural.com.br
+          ssh-username: natural
+          local-folder: .
+          remote-folder: ~/server
+
+      - name: Start Docker Compose
+        run: |
+          ssh natural@api.madeinnatural.com.br.com "cd ~/server && docker-compose up -d"
