@@ -22,7 +22,7 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
         gte: min,
         lte: max,
       },
-      provider: 'rmoura',
+      provider: providerId ? providerId : 'rmoura',
       ...(categoryId && { category: { some: { id: categoryId } } }),
       ...(unitId && { unit: { some: { id: unitId } } }),
       ...(packageId && { package: { some: { id: packageId } } }),
