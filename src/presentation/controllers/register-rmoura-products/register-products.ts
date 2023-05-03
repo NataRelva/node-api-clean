@@ -9,10 +9,10 @@ export class RegisterProductsController implements Controller {
     private readonly errorHandler: ErrorHandler,
     private readonly registerProducts: RegisterProduct,
   ) {}
-  /** Precisa ainda fazer a parte da validação da request */
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
       const { products } = request.body
+      console.log(products)
       if (!products) return badRequest(new MissingParamError('products'))
       await this.registerProducts.registerProducts(products)
       return ok('registrados com sucesso')
