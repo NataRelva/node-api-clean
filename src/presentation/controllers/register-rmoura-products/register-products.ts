@@ -12,11 +12,13 @@ export class RegisterProductsController implements Controller {
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
       const { products } = request.body
-      console.log(products)
       if (!products) return badRequest(new MissingParamError('products'))
-      await this.registerProducts.registerProducts(products)
+      // Filtrar os produtos undefined
+      const filteredProducts = products.filter(product => product !== undefined)
+      await this.registerProducts.registerProducts(filteredProducts)
       return ok('registrados com sucesso')
     } catch (error) {
+      console.log(error)
       return this.errorHandler.handle(error)
     }
   }
