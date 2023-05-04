@@ -9,39 +9,14 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
 
   constructor(private readonly prisma: PrismaClient) { }
 
-  async loadByProviderID(filterProps: FilterRequest, providerId: string): Promise<ProductResponse> { 
-    const { filter, paginator, text } = filterProps;
-    const { page, limit } = paginator;
-    const { categoryId, unitId, packageId, price } = filter;
-    const { min = 0, max = Number.MAX_SAFE_INTEGER } = price;
-    const where = {
-      name: {
-        contains: text,
-      },
-      price: {
-        gte: min,
-        lte: max,
-      },
-      provider: providerId ? providerId : 'rmoura',
-      ...(categoryId && { category: { some: { id: categoryId } } }),
-      ...(unitId && { unit: { some: { id: unitId } } }),
-      ...(packageId && { package: { some: { id: packageId } } }),
-    };
-    const products = await this.prisma.product.findMany({
-      where,
-      include: {
-        unit: true,
-        category: true,
-        package: true,
-      },
-      take: limit,
-      skip: page !== 0 ? (page - 1) * limit : 0,
-    }) as any as ProductModel[]
-    const total = await this.prisma.product.count({ where });
+  async loadByProviderID(filterProps: FilterRequest, providerId: string): Promise<ProductResponse> {
+    
+    const { page, limit } = filterProps.paginator
+    const { products } = providerId == 'rmoura' ? await this.pullRmoura(filterProps) : await this.pullCelmar(filterProps)
+    const total = await this.prisma.product.count({where: {provider: providerId}})
     const totalPages = Math.ceil(total / limit);
-    const montColumns = (products: ProductModel[]): string[] => { 
-      const columns = Object.keys(products[0]).filter(column => column !== 'id' && column !== 'provider')
-      return columns;
+    const montColumns = ( products: ProductModel[] ): string[] => { 
+      if (products[0]) return Object.keys(products[0]).filter(column => column !== 'id' && column !== 'provider')
     }
     const tableProperties = {
       columns: montColumns(products),
@@ -132,6 +107,47 @@ export class ProductPrismaRepository implements AddProductsRepository, GetProduc
 
   }
   
+
+  async pullRmoura(props: FilterRequest): Promise<{
+    currentPage: number;
+    totalPages: number;
+    products: ProductModel[]
+  }> {
+    const { filter, paginator, text } = props;
+    const { page, limit } = paginator;
+    const { categoryId, unitId, packageId, price } = filter;
+    const { min = 0, max = Number.MAX_SAFE_INTEGER } = price;
+    const where = {
+      name: {
+        contains: text,
+      },
+      price: {
+        gte: min,
+        lte: max,
+      },
+      provider: 'rmoura',
+      ...(categoryId && { category: { some: { id: categoryId } } }),
+      ...(unitId && { unit: { some: { id: unitId } } }),
+      ...(packageId && { package: { some: { id: packageId } } }),
+    };
+    const products = await this.prisma.product.findMany({
+      where,
+      include: {
+        unit: true,
+        category: true,
+        package: true,
+      },
+      take: limit,
+      skip: page !== 0 ? (page - 1) * limit : 0,
+    }) as any as ProductModel[]
+    const total = await this.prisma.product.count({ where });
+    const totalPages = Math.ceil(total / limit);
+    return { 
+      currentPage: page,
+      totalPages,
+      products
+    }
+  }
 
   async pullCelmar(props: FilterRequest): Promise<{
     currentPage: number;

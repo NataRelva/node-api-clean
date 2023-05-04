@@ -2,7 +2,7 @@ import { ProductPrismaRepository } from '../../../infra/db/prisma/product/produc
 import { ErrorHandlerAdapter } from '../../../utils/error-handler-adapter';
 import { Controller } from '../../../presentation/protocols/controller';
 import { PrismaClient } from '@prisma/client';
-import { LoadProductsController } from '../../../presentation/controllers/pull-products/pull-products-rmoura-controller';
+import { LoadProductsController } from '../../../presentation/controllers/pull-products/pull-products-controller';
 import { DbLoadProducts } from '../../../data/usecases/product/load-products/db-load-products.repository.usecase';
 export const makePullProductsController = (): Controller => {
   const pullProduct = new ProductPrismaRepository(new PrismaClient())

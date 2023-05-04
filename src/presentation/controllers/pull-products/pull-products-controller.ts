@@ -7,7 +7,7 @@ import { Controller } from './../../protocols/controller';
 import { LoadProductsUsecase } from '../../../domain/useCases/product/load-products/load-products.usecase';
 export class LoadProductsController implements Controller {
   constructor(
-    private readonly pullProductsRmoura: LoadProductsUsecase,
+    private readonly loadProducts: LoadProductsUsecase,
     private readonly handleError: ErrorHandlerAdapter,
   ) {}
   async handle(request: HttpRequest): Promise<HttpResponse> {
@@ -15,7 +15,7 @@ export class LoadProductsController implements Controller {
     const providerId = request.body.providerId
     try {
       if (!filter) return badRequest(new MissingParamError('filter'))
-      const products = await this.pullProductsRmoura.execute(filter, providerId)
+      const products = await this.loadProducts.execute(filter, providerId)
       return ok(products)
     } catch (error) {
       return this.handleError.handle(error)
